@@ -32,7 +32,7 @@
     # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
     { mime = "application/postscript", run = "mediainfo" },
 
-    { url = "*.nu", run = 'piper -- nu --commands "open --raw `"$1"` | nu-highlight"'},
+    { url = "*.nu", run = 'piper -- nu --commands "open --raw "$1" | nu-highlight"'},
 
     { url = "*.csv", run = "rich-preview"}, # for csv files
     { url = "*.md", run = "rich-preview" }, # for markdown (.md) files

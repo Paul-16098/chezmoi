@@ -10,13 +10,13 @@ hash = "e954f3d314ba732336592101bb47dd03"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:piper"
-rev = "e07bf41"
+rev = "6f50636"
 hash = "1a983fd55fb94ca165f0d0fd9e1671b9"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:types"
-rev = "e07bf41"
-hash = "41c5bdbd37bb2f80484011e0d6d25ab1"
+rev = "6f50636"
+hash = "279c336936f0cea7a2782ce2a84babcd"
 
 [[plugin.deps]]
 use = "AnirudhG07/rich-preview"
@@ -30,8 +30,8 @@ hash = "8009873342496fdb042bba09e239eef3"
 
 [[plugin.deps]]
 use = "KKV9/command"
-rev = "4762ecc"
-hash = "65fff40a0060fe4b1c42d49d29f770fd"
+rev = "523e6a5"
+hash = "a7e5577f7bae80fa064e416c09ac62a4"
 
 [[plugin.deps]]
 use = "hankertrix/augment-command"
@@ -55,7 +55,7 @@ hash = "417de633d0008580b386bd3358eea56f"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:jump-to-char"
-rev = "e07bf41"
+rev = "6f50636"
 hash = "a94dca872caafd80fc5302668a092cbd"
 
 [[plugin.deps]]
