@@ -1,0 +1,146 @@
+require("custom-shell"):setup({
+    save_history = false,
+})
+---- augment-command ----
+require("augment-command"):setup({
+    open_file_after_creation = true,
+    smooth_scrolling = true,
+})
+---- yatline ----
+require("yatline"):setup({
+    section_separator = { open = "", close = "" },
+    part_separator = { open = "", close = "" },
+    inverse_separator = { open = "", close = "" },
+
+    padding = { inner = 1, outer = 1 },
+
+    style_a = {
+        bg = "white",
+        fg = "black",
+        bg_mode = {
+            normal = "white",
+            select = "brightyellow",
+            un_set = "brightred",
+        },
+    },
+    style_b = { bg = "brightblack", fg = "brightwhite" },
+    style_c = { bg = "black", fg = "brightwhite" },
+
+    permissions_t_fg = "green",
+    permissions_r_fg = "yellow",
+    permissions_w_fg = "red",
+    permissions_x_fg = "cyan",
+    permissions_s_fg = "white",
+
+    tab_width = 20,
+
+    selected = { icon = "󰻭", fg = "yellow" },
+    copied = { icon = "", fg = "green" },
+    cut = { icon = "", fg = "red" },
+
+    files = { icon = "", fg = "blue" },
+    filtereds = { icon = "", fg = "magenta" },
+
+    total = { icon = "󰮍", fg = "yellow" },
+    success = { icon = "", fg = "green" },
+    failed = { icon = "", fg = "red" },
+
+    show_background = true,
+
+    display_header_line = true,
+    display_status_line = true,
+
+    component_positions = { "header", "tab", "status" },
+
+    header_line = {
+        left = {
+            section_a = {
+                { type = "line", name = "tabs" },
+            },
+            section_b = {
+            },
+            section_c = {},
+        },
+        right = {
+            section_a = {
+                { type = "string", name = "filter_query" }
+            },
+            section_b = {},
+            section_c = {},
+        },
+    },
+
+    status_line = {
+        left = {
+            section_a = {
+                { type = "string", name = "tab_mode" },
+            },
+            section_b = {
+                { type = "string",   name = "hovered_size" },
+                { type = "coloreds", name = "created_time" }
+            },
+            section_c = {
+                { type = "string",   name = "hovered_path" },
+                { type = "coloreds", name = "symlink" },
+                { type = "coloreds", name = "count",       params = { true, true } },
+            },
+        },
+        right = {
+            section_a = {
+                { type = "coloreds", custom = false,          name = "task_states" },
+                { type = "string",   name = "cursor_position" },
+            },
+            section_b = {
+                { type = "string", name = "cursor_percentage" },
+            },
+            section_c = {
+                { type = "string",   name = "hovered_mime" },
+                { type = "coloreds", name = "permissions" },
+            },
+        },
+    },
+})
+require("yatline-created-time"):setup()
+function Yatline.coloreds.get:symlink()
+    local symlink = {}
+    local h = cx.active.current.hovered
+
+    if not h then
+        ya.dbg("no hovered")
+        return nil
+    end
+    if not h.cha.is_link then
+        ya.dbg("not a symlink")
+        return nil
+    end
+
+    local link_target = ("-> " .. tostring(h.link_to))
+    table.insert(symlink, { link_target, th.tabs })
+    return symlink
+end
+
+---- bunny ----
+require("bunny"):setup({
+    hops = {
+        { key = "/",          path = "/", },
+        { key = "t",          path = "/tmp", },
+        { key = "n",          path = "/nix/store",     desc = "Nix store" },
+        { key = "~",          path = "~",              desc = "Home" },
+        { key = "m",          path = "~/Music",        desc = "Music" },
+        { key = "d",          path = "~/Desktop",      desc = "Desktop" },
+        { key = "D",          path = "~/Documents",    desc = "Documents" },
+        { key = "c",          path = "~/.config",      desc = "Config files" },
+        { key = { "l", "s" }, path = "~/.local/share", desc = "Local share" },
+        { key = { "l", "b" }, path = "~/.local/bin",   desc = "Local bin" },
+        { key = { "l", "t" }, path = "~/.local/state", desc = "Local state" },
+        -- key and path attributes are required, desc is optional
+    },
+    desc_strategy = "path", -- If desc isn't present, use "path" or "filename", default is "path"
+    ephemeral = true,       -- Enable ephemeral hops, default is true
+    tabs = true,            -- Enable tab hops, default is true
+    notify = false,         -- Notify after hopping, default is false
+    fuzzy_cmd = "fzf",      -- Fuzzy searching command, default is "fzf"
+})
+--- fg ---
+require("fg"):setup({
+})

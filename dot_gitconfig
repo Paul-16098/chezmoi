@@ -1,0 +1,49 @@
+[core]
+	editor = code-insiders --wait
+	preloadindex = true
+	autocrlf = input
+	compression = 3
+	longpaths = true
+
+[user]
+	name = Paul-16098
+	email = pl816098@gmail.com
+	signingkey = 6AF57068AAC77F2B
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[push]
+	autoSetupRemote = true
+	# GitHub 不支援?
+	# gpgsign = true
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
+[gpg]
+	format = openpgp
+	program = "C:\\Program Files\\GnuPG\\bin\\gpg.exe"
+	# format = ssh
+[http]
+	postBuffer = 524288000
+
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = pl816098@gmail.com
+	smtpServerPort = 587
+[checkout]
+	workers = 0
+[credential "https://github.com"]
+	helper =
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+
+
+[merge]
+	tool = vscode
+

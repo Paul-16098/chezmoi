@@ -1,0 +1,12 @@
+# gitgud.io user
+Host ssh.gitgud.io
+HostName gitgud.io
+User pl816098@gmail.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/github
+
+# github.com user
+Host github.com
+HostName ssh.github.com
+User git
+Port 443

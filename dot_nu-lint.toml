@@ -1,0 +1,15 @@
+sequential                 = false
+pipeline_placement         = "start"
+max_pipeline_length        = 80
+skip_external_parse_errors = true
+explicit_optional_access   = false
+
+[groups]
+
+[rules]
+    explicit_long_flags         = "warning"
+    wrap_external_with_complete = "hint"
+    unchecked_get_index         = "off"
+    catch_builtin_error_try     = "hint"
+    non_final_failure_check     = "hint"
+    max_function_body_length    = "off"

@@ -1,0 +1,43 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format       = "$time$all"
+right_format = "$shlvl$cmd_duration$battery"
+
+[character]
+    success_symbol = "[❯](bold green)"
+    error_symbol   = "[! ❯](bold red)"
+
+[battery]
+    full_symbol        = "• "
+    charging_symbol    = "⇡ "
+    discharging_symbol = "⇣ "
+    unknown_symbol     = "❓ "
+    empty_symbol       = "❗ "
+    disabled           = false
+    [[battery.display]]
+        threshold = 50
+
+[erlang]
+    symbol = "ⓔ "
+
+[nodejs]
+    symbol = "[⬢](bold green) "
+
+[pulumi]
+    symbol = "🧊 "
+
+[typst]
+    symbol = "t "
+
+[shlvl]
+    disabled = false
+[git_metrics]
+    disabled = false
+
+[directory]
+    truncation_length = 5
+    truncation_symbol = ".../"
+
+[time]
+    disabled = false
+    time_format = "%R"
