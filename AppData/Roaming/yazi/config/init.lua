@@ -106,11 +106,11 @@ function Yatline.coloreds.get:symlink()
     local h = cx.active.current.hovered
 
     if not h then
-        ya.dbg("no hovered")
+        -- ya.dbg("no hovered")
         return nil
     end
     if not h.cha.is_link then
-        ya.dbg("not a symlink")
+        -- ya.dbg("not a symlink")
         return nil
     end
 
