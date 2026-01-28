@@ -12,6 +12,10 @@
     edit = [
        { run = "%EDITOR% %s", desc = "%EDITOR%", block = true },
     ]
+[open]
+    prepend_rules = [
+      { url = "*.jar", use = ["open", "extract", "reveal" ] },
+    ]
 
 [plugin]
   prepend_preloaders = [
