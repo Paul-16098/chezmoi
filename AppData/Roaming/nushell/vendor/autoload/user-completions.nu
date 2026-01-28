@@ -218,8 +218,11 @@ export extern "ya pkg add" [
 ]
 
 def "nu-complete chezmoi unmanaged" []: nothing -> list<string> {
-  chezmoi unmanaged | lines
+  (chezmoi unmanaged) | lines
 }
+# Add targets to the source state. If any target is already in the source
+# state, then its source state is replaced with its current state in the
+# destination directory.
 export extern "chezmoi add" [
   # Primary flags
   --autotemplate (-a) # Generate the template when adding files as templates
@@ -228,7 +231,6 @@ export extern "chezmoi add" [
   --exact # Add directories exactly
   --exclude (-x): string # Exclude entry types (comma-separated) (default none)
   --follow (-f) # Add symlink targets instead of symlinks
-  --help (-h) # help for add
   --include (-i): string # Include entry types (comma-separated) (default all)
   --new # Create new file if target does not exist
   --prompt (-p) # Prompt before adding each entry
@@ -236,11 +238,56 @@ export extern "chezmoi add" [
   --recursive (-r) # Recurse into subdirectories (default true)
   --secrets
   -s: string # Scan for secrets when adding unencrypted files (error|ignore|warning) (default warning)
-  -T
-  --template # Add files as templates
+  --template (-T) # Add files as templates
   --template-symlinks # Add symlinks with target in source or home dirs as templates
 
-  # Global flags (selected)
+  ...file: path
+]
+export alias chad = chezmoi add
+def "nu-complete chezmoi managed" []: nothing -> list<string> {
+  (chezmoi managed) | lines
+}
+# Ensure that target... are in the target state, updating them if necessary.
+# If no targets are specified, the state of all targets are ensured. If a
+# target has been modified since chezmoi last wrote it then the user will be
+# prompted if they want to overwrite the file.
+export extern "chezmoi apply" [
+  --exclude (-x): string # Exclude entry types (default none)
+  --include (-i): string # Include entry types (default all)
+  --init # Recreate config file from template
+  --parent-dirs (-P) # Apply all parent directories
+  --recursive (-r) # Recurse into subdirectories (default true)
+
+  ...target: path@"nu-complete chezmoi managed" # Target to apply (default all)
+]
+export alias chap = chezmoi apply
+# Perform a three-way merge between the destination state, the target state,
+# and the source state for each target. The merge tool is defined by the
+# merge.command configuration variable, and defaults to vimdiff. If multiple
+# targets are specified the merge tool is invoked separately and sequentially
+# for each target. If the target state cannot be computed (for example if
+# source is a template containing errors or an encrypted file that cannot be
+# decrypted) a two-way merge is performed instead.
+
+# The order of arguments to merge.command is set by merge.args. Each argument
+# is interpreted as a template with the variables .Destination, .Source, and
+# .Target available corresponding to the path of the file in the destination
+# state, the source state, and the target state respectively. The default
+# value of merge.args is ["{{ .Destination }}", "{{ .Source }}", "{{ .Target
+# }}"]. If merge.args does not contain any template arguments then {{
+# .Destination }}, {{ .Source }}, and {{ .Target }} will be appended
+# automatically.
+export extern "chezmoi merge" [
+  ...target: path@"nu-complete chezmoi managed"
+]
+# Perform a three-way merge for file whose actual state does not match its
+# target state. The merge is performed with chezmoi merge.
+export extern "chezmoi merge-all" [
+  --init # Recreate config file from template
+  --recursive (-r) # Recurse into subdirectories (default true)
+]
+
+export extern chezmoi [
   --age-recipient: string # Override age recipient
   --age-recipient-file: string # Override age recipient file
   --cache (-c): path # Set cache directory
@@ -270,20 +317,29 @@ export extern "chezmoi add" [
   --use-builtin-git: string # Use builtin git (bool|auto)
   --verbose (-v) # Make output more verbose
   --working-tree: path # Set working tree directory
-
-  ...file: path
 ]
-export alias chad = chezmoi add
-def "nu-complete chezmoi managed" []: nothing -> list<string> {
-  chezmoi managed | lines
-}
-export extern "chezmoi apply" [
+# List all unmanaged files in paths. When no paths are supplied, list all
+# unmanaged files in the destination directory.
+# It is an error to supply paths that are not found on the file system.
+export extern "chezmoi unmanaged" [
   --exclude (-x): string # Exclude entry types (default none)
   --include (-i): string # Include entry types (default all)
-  --init # Recreate config file from template
-  --parent-dirs (-P) # Apply all parent directories
-  --recursive (-r) # Recurse into subdirectories (default true)
+  --nul-path-separator (-0) # Use the NUL character as a path separator
+  --path-style (-p) # Path style (absolute|relative)(default relative)
+  --tree (-t) # Print paths as a tree
 
-  ...target: path@"nu-complete chezmoi managed" # Target to apply (default all)
+  ...path: path
 ]
-export alias chap = chezmoi apply
+# List all managed entries in the destination directory under all paths in
+# alphabetical order. When no paths are supplied, list all managed entries in
+# the destination directory in alphabetical order.
+export extern "chezmoi managed" [
+  --exclude (-x): string # Exclude entry types (default none)
+  --include (-i): string # Include entry types (default all)
+  --nul-path-separator (-0) # Use the NUL character as a path separator
+  --path-style (-p) # Path style (absolute|all|relative|source-absolute|source-relative)(default relative)
+  --tree (-t) # Print paths as a tree
+  --format (-f): string # Format (<none>|json|yaml)(default json)
+
+  ...path: path
+]
