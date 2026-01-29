@@ -63,5 +63,10 @@ use = "DreamMaoMao/fg"
 rev = "b9fb819"
 hash = "7d62f2eae04f77d13a21917c169b151b"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:mime-ext"
+rev = "6f50636"
+hash = "22dec1266e598eb7dba353436bc943cc"
+
 [flavor]
 deps = []
