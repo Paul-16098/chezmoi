@@ -1,0 +1,27 @@
+encryption = "gpg"
+
+[diff]
+    command = "code-insiders"
+    args = [
+        "--wait",
+        "--diff",
+    ]
+
+[keepassxc]
+    database = "~/OneDrive/文件/密碼.kdbx"
+
+[merge]
+    command = "code-insiders"
+    args = [
+        "--new-window",
+        "--wait",
+        "--merge",
+        "{{ "{{ .Destination }}" }}",
+        "{{ "{{ .Target }}" }}",
+        '{{ "{{ printf \"%s.base\" .Target }}" }}',
+        "{{ "{{ .Source }}" }}",
+    ]
+
+[git]
+    autoAdd    = true
+    autoCommit = true
