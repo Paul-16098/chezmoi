@@ -38,23 +38,6 @@ $env.TRANSIENT_PROMPT_INDICATOR = { (starship module directory) + $"(ansi kd)$(a
 
 source "~/.local/share/atuin/init.nu"
 
-# alias
-alias ls = ls --all --threads
-alias ll = ls --long
-alias cargo = cargo auditable
-alias pip = uv pip
-alias python = uv run
-alias py = python
-alias pip = uv pip
-alias gs = git status
-alias cls = clear
-alias & = job spawn
-alias "decode url" = url decode
-alias "encode url" = url encode
-alias "ya pack -a" = ya pkg add
-# nu#16260
-# alias "from editorconfig" = from ini
-
 # $env.NU_ALIAS_FINDER_PREFIX = $"(ansi gb)Alias Tip(ansi reset):"
 # $env.NU_ALIAS_FINDER_IGNORED = "plugin"
 # overlay use ($nu.data-dir | path join "alias-finder/alias-finder.nu")

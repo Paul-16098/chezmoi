@@ -6,9 +6,9 @@
 	longpaths = true
 
 [user]
-	name = Paul-16098
-	email = pl816098@gmail.com
-	signingkey = 6AF57068AAC77F2B
+	name = {{ .GH_NAME }}
+	email = {{ .EMAIL }}
+	signingkey = {{ .GPG_KEY_ID }}
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
@@ -32,7 +32,7 @@
 [sendemail]
 	smtpEncryption = tls
 	smtpServer = smtp.gmail.com
-	smtpUser = pl816098@gmail.com
+	smtpUser = {{ .EMAIL }}
 	smtpServerPort = 587
 [checkout]
 	workers = 0

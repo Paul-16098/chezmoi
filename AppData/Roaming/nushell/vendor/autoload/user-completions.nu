@@ -343,3 +343,103 @@ export extern "chezmoi managed" [
 
   ...path: path
 ]
+# Change the attributes and/or type of targets. modifier specifies what to
+# modify.
+
+# Add attributes by specifying them or their abbreviations directly,
+# optionally prefixed with a plus sign (+). Remove attributes by prefixing
+# them or their attributes with the string no or a minus sign (-). The
+# available attribute modifiers and their abbreviations are:
+
+#  Attribute modifier                  | Abbreviation
+# -------------------------------------|------------------------------------
+#  after                               | a
+#  before                              | b
+#  empty                               | e
+#  encrypted                           | none
+#  exact                               | none
+#  executable                          | x
+#  external                            | none
+#  once                                | o
+#  onchange                            | none
+#  private                             | p
+#  readonly                            | r
+#  remove                              | none
+#  template                            | t
+
+# The type of a target can be changed using a type modifier:
+
+#  Type modifier
+# --------------------------------------------------------------------------
+#  create
+#  modify
+#  script
+#  symlink
+
+# The negative form of type modifiers, e.g. nocreate, changes the target to be
+# a regular file if it is of that type, otherwise the type is left unchanged.
+
+# Multiple modifications may be specified by separating them with a comma (,).
+# If you use the -modifier form then you must put modifier after a -- to
+# prevent
+# chezmoi from interpreting -modifier as an option.
+export extern "chezmoi chattr" [
+  --recursive (-r) # Recurse into subdirectories
+
+  attributes: string
+  ...target: path@"nu-complete chezmoi managed"
+]
+# Execute templates. This is useful for testing templates or for calling
+# chezmoi from other scripts. templates are interpreted as literal templates,
+# with no whitespace added to the output between arguments. If no templates
+# are specified, the template is read from stdin.
+export extern "chezmoi execute-template" [
+  --file (-f) # Treat arguments as filenames
+  --init (-i) # Simulate chezmoi init
+  --left-delimiter: string # Set left template delimiter
+  --promptBool: string # Simulate promptBool (default [])
+  --promptChoice: string # Simulate promptChoice (default [])
+  --promptInt: int # Simulate promptInt (default [])
+  --promptMultichoice: string # Simulate promptMultichoice (default [])
+  --promptString (-p): string # Simulate promptString (default [])
+  --right-delimiter: string # Set right template delimiter
+  --stdinisatty # Simulate stdinIsATTY (default true)
+  --with-stdin # Set .chezmoi.stdin to the contents of the standard input
+
+  ...template: string
+]
+# : [
+#   nothing -> nothing
+#   string -> nothing
+#   ]
+
+# Remove targets from the source state, i.e. stop managing them. targets must
+# have entries in the source state. They cannot be externals.
+export extern "chezmoi forget" [
+  ...target: path@"nu-complete chezmoi managed"
+]
+
+# Print the status of the files and scripts managed by chezmoi in a format
+# similar to git status.
+
+# The first column of output indicates the difference between the last state
+# written by chezmoi and the actual state. The second column indicates the
+# difference between the actual state and the target state, and what effect
+# running chezmoi apply will have.
+
+#  Character    | Meaning     | First column       | Second column
+# --------------|-------------|--------------------|------------------------
+#  Space        | No change   | No change          | No change
+#  A            | Added       | Entry was created  | Entry will be created
+#  D            | Deleted     | Entry was deleted  | Entry will be deleted
+#  M            | Modified    | Entry was modified | Entry will be modified
+#  R            | Run         | Not applicable     | Script will be run
+export extern "chezmoi status" [
+  --exclude (-x): string # Exclude entry types (default none)
+  --include (-i): string # Include entry types (default all)
+  --init # Recreate config file from template
+  --parent-dirs (-P) # Show status of all parent directories
+  --path-style (-p): string # Path style (absolute|relative)(default relative)
+  --recursive (-r) # Recurse into subdirectories (default true)
+]
+export alias chst = chezmoi status

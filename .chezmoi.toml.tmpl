@@ -1,3 +1,11 @@
+{{ $EMAIL := promptStringOnce . "email" "What is your email address" -}}
+{{ $GH_NAME := promptStringOnce . "github_name" "What is your GitHub user name" -}}
+{{ $GPG_KEY_ID := promptStringOnce . "gpg_key_id" "What is your GPG key ID" -}}
+[data]
+    EMAIL = {{ $EMAIL | quote }}
+    GH_NAME = {{ $GH_NAME | quote }}
+    GPG_KEY_ID = {{ $GPG_KEY_ID | quote }}
+
 encryption = "gpg"
 
 [diff]
