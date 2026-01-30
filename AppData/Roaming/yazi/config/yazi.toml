@@ -1,55 +1,94 @@
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
 [mgr]
-    sort_by     = "natural"
-    show_hidden = true
+    sort_by      = "natural"
+    show_hidden  = true
     show_symlink = false
-    linemode = "mtime"
+    linemode     = "mtime"
+
 [preview]
     wrap = "yes"
 
-[opener]
-    edit = [
-       { run = "%EDITOR% %s", desc = "$EDITOR", block = true },
+[[opener.edit]]
+    run   = "%EDITOR% %s"
+    desc  = "$EDITOR"
+    block = true
+
+[[open.prepend_rules]]
+    url = "*.jar"
+    use = [
+        "open",
+        "extract",
+        "reveal",
     ]
-[open]
-    prepend_rules = [
-      { url = "*.jar", use = ["open", "extract", "reveal" ] },
-      { url = "*", use = [ "open", "edit", "reveal" ] },
+
+[[open.prepend_rules]]
+    url = "*"
+    use = [
+        "open",
+        "edit",
+        "reveal",
     ]
 
 [[plugin.prepend_fetchers]]
-id   = "mime"
-url  = "local://*"
-run  = "mime-ext.local"
-prio = "high"
+    id   = "mime"
+    url  = "local://*"
+    run  = "mime-ext.local"
+    prio = "high"
 
 [[plugin.prepend_fetchers]]
-id   = "mime"
-url  = "remote://*"
-run  = "mime-ext.remote"
-prio = "high"
-[plugin]
-  prepend_preloaders = [
-    { mime = "{audio,video,image}/*", run = "mediainfo" },
-    { mime = "application/subrip", run = "mediainfo" },
-    { mime = "application/postscript", run = "mediainfo" },
-    {mime="text/csv",run="noop"}
-  ]
-  prepend_previewers = [
-    { mime = "{audio,video,image}/*", run = "mediainfo"},
-    { mime = "application/subrip", run = "mediainfo" },
-    { mime = "application/postscript", run = "mediainfo" },
+    id   = "mime"
+    url  = "remote://*"
+    run  = "mime-ext.remote"
+    prio = "high"
 
-    { url = "*.nu", run = 'piper -- nu --commands "open --raw "$1" | nu-highlight"'},
+[[plugin.prepend_preloaders]]
+    mime = "{audio,video,image}/*"
+    run  = "mediainfo"
 
-    { url = "*.csv", run = "code"}, # for csv files
-    { url = "*.md", run = "rich-preview" }, # for markdown (.md) files
-    { url = "*.rst", run = "rich-preview"}, # for restructured text (.rst) files
-    { url = "*.ipynb", run = "rich-preview"}, # for jupyter notebooks (.ipynb)
-]
+[[plugin.prepend_preloaders]]
+    mime = "application/subrip"
+    run  = "mediainfo"
 
+[[plugin.prepend_preloaders]]
+    mime = "application/postscript"
+    run  = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+    mime = "text/csv"
+    run  = "noop"
+
+[[plugin.prepend_previewers]]
+    mime = "{audio,video,image}/*"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    mime = "application/subrip"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    mime = "application/postscript"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    url = "*.nu"
+    run = 'piper -- nu --commands "open --raw "$1" | nu-highlight"'
+
+[[plugin.prepend_previewers]]
+    url = "*.csv"
+    run = "code"
+
+[[plugin.prepend_previewers]]
+    url = "*.md"
+    run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+    url = "*.rst"
+    run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+    url = "*.ipynb"
+    run = "rich-preview"
 
 [tasks]
-  image_alloc      = 1073741824        # = 1024*1024*1024 = 1024MB
-
+    image_alloc = 1073741824

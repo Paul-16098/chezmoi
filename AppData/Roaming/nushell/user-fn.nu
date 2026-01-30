@@ -447,6 +447,6 @@ export def --wrapped --env y [...args: string]: nothing -> nothing {
   rm --force --permanent $tmp
 }
 # https://www.chezmoi.io/user-guide/frequently-asked-questions/design/#why-does-chezmoi-cd-spawn-a-shell-instead-of-just-changing-directory
-export def "chezmoi cd" [] {
+export def --env "chezmoi cd" [] {
   cd (chezmoi source-path | path expand)
 }
