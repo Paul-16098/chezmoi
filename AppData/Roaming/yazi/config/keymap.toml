@@ -11,7 +11,7 @@
     desc = "剪切"
 
 [[mgr.keymap]]
-    on   = "<C-v>"
+    on   = "v"
     run  = "paste"
     desc = "粘貼"
 

@@ -1,9 +1,16 @@
-# gitgud.io user
+# gitgud.io user - SSH别名
 Host ssh.gitgud.io
 HostName gitgud.io
 User {{ .EMAIL }}
 PreferredAuthentications publickey
 IdentityFile ~/.ssh/github
+
+# gitgud.io 直接访问
+Host gitgud.io
+HostName gitgud.io
+User git
+IdentityFile ~/.ssh/github
+PreferredAuthentications publickey
 
 # github.com user
 Host github.com
