@@ -218,7 +218,7 @@ export extern "ya pkg add" [
 ]
 
 def "nu-complete chezmoi unmanaged" []: nothing -> list<string> {
-  (chezmoi unmanaged) | lines
+  (chezmoi unmanaged) | lines | par-each --keep-order { "~/" + ($in) } | path expand | where $it not-starts-with pwd
 }
 # Add targets to the source state. If any target is already in the source
 # state, then its source state is replaced with its current state in the
@@ -244,8 +244,13 @@ export extern "chezmoi add" [
   ...file: path
 ]
 export alias chad = chezmoi add
-def "nu-complete chezmoi managed" []: nothing -> list<string> {
-  (chezmoi managed) | lines | par-each --keep-order { "~/" + ($in) }
+def "nu-complete chezmoi managed" [] {
+  {
+    options: {
+      completion_algorithm: substring
+    }
+    completions: ((chezmoi managed) | lines | par-each --keep-order { "~/" + ($in) })
+  }
 }
 # Ensure that target... are in the target state, updating them if necessary.
 # If no targets are specified, the state of all targets are ensured. If a
