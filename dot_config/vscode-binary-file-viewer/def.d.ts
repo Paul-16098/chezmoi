@@ -539,32 +539,11 @@ declare function dbgOverrideDetailsOpen(open: boolean | undefined): void;
 /** Math object for mathematical functions */
 declare const Math: Math;
 
-/** Date constructor for working with dates */
-declare const Date: DateConstructor;
-
-/** String constructor */
-declare const String: StringConstructor;
-
 /** Number constructor */
 declare const Number: NumberConstructor;
 
-/** BigInt constructor for arbitrary precision integers */
-declare const BigInt: BigIntConstructor;
-
-/** Object constructor */
-declare const Object: ObjectConstructor;
-
-/** Array constructor */
-declare const Array: ArrayConstructor;
-
-/** ArrayBuffer for binary data */
-declare const ArrayBuffer: ArrayBufferConstructor;
-
 /** DataView for reading typed binary data */
 declare const DataView: DataViewConstructor;
-
-/** Map for key-value storage */
-declare const Map: MapConstructor;
 
 /** JSON object for parsing and stringifying */
 declare const JSON: JSON;

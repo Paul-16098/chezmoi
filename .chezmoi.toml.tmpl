@@ -33,3 +33,7 @@ encryption = "gpg"
 [git]
     autoAdd    = true
     autoCommit = true
+{{- if promptBoolOnce . "use_pinentry" "Do you want to use pinentry for password input" }}
+[pinentry]
+    command = 'pinentry'
+{{- end }}

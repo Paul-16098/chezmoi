@@ -252,6 +252,14 @@ def "nu-complete chezmoi managed" [] {
     completions: ((chezmoi managed) | lines | par-each --keep-order { "~/" + ($in) })
   }
 }
+def "nu-complete chezmoi managed-hasdiff" [] {
+  {
+    options: {
+      completion_algorithm: substring
+    }
+    completions: (chezmoi status | detect columns --no-headers | rename status path | get path | par-each --keep-order { "~/" + ($in) })
+  }
+}
 # Ensure that target... are in the target state, updating them if necessary.
 # If no targets are specified, the state of all targets are ensured. If a
 # target has been modified since chezmoi last wrote it then the user will be
@@ -263,7 +271,7 @@ export extern "chezmoi apply" [
   --parent-dirs (-P) # Apply all parent directories
   --recursive (-r) # Recurse into subdirectories (default true)
 
-  ...target: path@"nu-complete chezmoi managed" # Target to apply (default all)
+  ...target: path@"nu-complete chezmoi managed-hasdiff" # Target to apply (default all)
 ]
 export alias chap = chezmoi apply
 # Perform a three-way merge between the destination state, the target state,
@@ -350,12 +358,12 @@ export extern "chezmoi managed" [
 ]
 # Change the attributes and/or type of targets. modifier specifies what to
 # modify.
-
+# 
 # Add attributes by specifying them or their abbreviations directly,
 # optionally prefixed with a plus sign (+). Remove attributes by prefixing
 # them or their attributes with the string no or a minus sign (-). The
 # available attribute modifiers and their abbreviations are:
-
+# 
 #  Attribute modifier                  | Abbreviation
 # -------------------------------------|------------------------------------
 #  after                               | a
@@ -371,19 +379,19 @@ export extern "chezmoi managed" [
 #  readonly                            | r
 #  remove                              | none
 #  template                            | t
-
+# 
 # The type of a target can be changed using a type modifier:
-
+# 
 #  Type modifier
 # --------------------------------------------------------------------------
 #  create
 #  modify
 #  script
 #  symlink
-
+# 
 # The negative form of type modifiers, e.g. nocreate, changes the target to be
 # a regular file if it is of that type, otherwise the type is left unchanged.
-
+# 
 # Multiple modifications may be specified by separating them with a comma (,).
 # If you use the -modifier form then you must put modifier after a -- to
 # prevent
@@ -426,12 +434,12 @@ export extern "chezmoi forget" [
 
 # Print the status of the files and scripts managed by chezmoi in a format
 # similar to git status.
-
+# 
 # The first column of output indicates the difference between the last state
 # written by chezmoi and the actual state. The second column indicates the
 # difference between the actual state and the target state, and what effect
 # running chezmoi apply will have.
-
+# 
 #  Character    | Meaning     | First column       | Second column
 # --------------|-------------|--------------------|------------------------
 #  Space        | No change   | No change          | No change
@@ -448,3 +456,19 @@ export extern "chezmoi status" [
   --recursive (-r) # Recurse into subdirectories (default true)
 ]
 export alias chst = chezmoi status
+# Launch a shell in the working tree (typically the source directory). chezmoi
+# will launch the command set by the cd.command configuration variable with
+# any extra arguments specified by cd.args. If this is not set, chezmoi will
+# attempt to detect your shell and finally fall back to an OS-specific default.
+# 
+# If the optional argument path is present, the shell will be launched in the
+# source directory corresponding to path.
+# 
+# The shell will have various CHEZMOI* environment variables set, as for
+# scripts.
+export extern "chezmoi cd" []
+# Print the path to each target's source state. If no targets are specified
+# then print the source directory.
+export extern "chezmoi source-path" [
+  path?: path@"nu-complete chezmoi managed"
+]
