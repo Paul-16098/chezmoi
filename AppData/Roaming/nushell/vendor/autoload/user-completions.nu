@@ -242,6 +242,8 @@ export extern "chezmoi add" [
   --template-symlinks # Add symlinks with target in source or home dirs as templates
 
   ...file: path
+
+  --help (-h) # help for chezmoi
 ]
 export alias chad = chezmoi add
 def "nu-complete chezmoi managed" [] {
@@ -253,12 +255,19 @@ def "nu-complete chezmoi managed" [] {
   }
 }
 def "nu-complete chezmoi managed-hasdiff" [] {
-  {
-    options: {
-      completion_algorithm: substring
+  # if has password, use unmanaged files for completion
+  return (
+    if false {
+      {
+        options: {
+          completion_algorithm: substring
+        }
+        completions: (chezmoi status | detect columns --no-headers | rename status path | get path | par-each --keep-order { "~/" + ($in) })
+      }
+    } else {
+      nu-complete chezmoi managed
     }
-    completions: (chezmoi status | detect columns --no-headers | rename status path | get path | par-each --keep-order { "~/" + ($in) })
-  }
+  )
 }
 # Ensure that target... are in the target state, updating them if necessary.
 # If no targets are specified, the state of all targets are ensured. If a
@@ -272,6 +281,7 @@ export extern "chezmoi apply" [
   --recursive (-r) # Recurse into subdirectories (default true)
 
   ...target: path@"nu-complete chezmoi managed-hasdiff" # Target to apply (default all)
+  --help (-h) # help for chezmoi
 ]
 export alias chap = chezmoi apply
 # Perform a three-way merge between the destination state, the target state,
@@ -292,69 +302,77 @@ export alias chap = chezmoi apply
 # automatically.
 export extern "chezmoi merge" [
   ...target: path@"nu-complete chezmoi managed"
+  --help (-h) # help for chezmoi
 ]
 # Perform a three-way merge for file whose actual state does not match its
 # target state. The merge is performed with chezmoi merge.
 export extern "chezmoi merge-all" [
   --init # Recreate config file from template
   --recursive (-r) # Recurse into subdirectories (default true)
+  --help (-h) # help for chezmoi
 ]
 
 export extern chezmoi [
   --age-recipient: string # Override age recipient
-  --age-recipient-file: string # Override age recipient file
-  --cache (-c): path # Set cache directory
-  --color: string # Colorize output (bool|auto)
-  --config: path # Set config file
-  --config-format: string # Set config file format (none|json|toml|yaml)
-  --debug (-d) # Include debug information in output
-  --destination: path # Set destination directory
-  --dry-run # Do not make any modifications to the destination directory
-  --force (-f) # Make all changes without prompting
-  --interactive (-i) # Prompt for all changes
-  --keep-going # Keep going as far as possible after an error
+  --age-recipient-file: string # Override age recipient
+  --cache: path = "~/.cache/chezmoi" # Set cache directory
+  --color: string = auto # Colorize output (bool|auto)
+  --config (-c): path # Set config file
+  --config-format # Set config file format (<none>|json|toml|yaml)
+  --debug # Include debug information in output
+  --destination (-D): path = ~ # Set destination directory
+  --dry-run (-n) # Do not make any modifications to the destination directory
+  --force # Make all changes without prompting
+  --help (-h) # help for chezmoi
+  --interactive # Prompt for all changes
+  --keep-going (-k) # Keep going as far as possible after an error
   --less-interactive # Prompt for changed or pre-existing targets
-  --mode (-m): string # Mode (file|symlink)
+  --mode: string = file # Mode (file|symlink)
   --no-pager # Do not use the pager
   --no-tty # Do not attempt to get a TTY for prompts
   --output (-o): path # Write output to path instead of stdout
   --override-data: string # Override data
   --override-data-file: path # Override data with file
   --persistent-state: path # Set persistent state file
-  --progress: string # Display progress bars (bool|auto)
-  --refresh-externals: string # Refresh external cache (always|auto|never[=always])
-  --source (-s): path # Set source directory
+  --progress: string = auto # Display progress bars (bool|auto)
+  --refresh-externals (-R): string = auto # Refresh external cache (always|auto|never[=always])
+  --source (-S): path = "~/.local/share/chezmoi" # Set source directory
   --source-path # Specify targets by source path
-  --use-builtin-age: string # Use builtin age (bool|auto)
+  --use-builtin-age: string = auto # Use builtin age (bool|auto)
   --use-builtin-diff # Use builtin diff
-  --use-builtin-git: string # Use builtin git (bool|auto)
+  --use-builtin-git: string = auto # Use builtin git (bool|auto)
   --verbose (-v) # Make output more verbose
-  --working-tree: path # Set working tree directory
+  --version # version for chezmoi
+  --working-tree (-W): path # Set working tree directory
 ]
 # List all unmanaged files in paths. When no paths are supplied, list all
 # unmanaged files in the destination directory.
 # It is an error to supply paths that are not found on the file system.
 export extern "chezmoi unmanaged" [
-  --exclude (-x): string # Exclude entry types (default none)
-  --include (-i): string # Include entry types (default all)
+  --exclude (-x): string = none # Exclude entry types
+  --include (-i): string = all # Include entry types
   --nul-path-separator (-0) # Use the NUL character as a path separator
-  --path-style (-p) # Path style (absolute|relative)(default relative)
+  --path-style (-p): string = relative # Path style (absolute|relative)
   --tree (-t) # Print paths as a tree
 
   ...path: path
+
+  --help (-h) # help for chezmoi
 ]
 # List all managed entries in the destination directory under all paths in
 # alphabetical order. When no paths are supplied, list all managed entries in
 # the destination directory in alphabetical order.
 export extern "chezmoi managed" [
-  --exclude (-x): string # Exclude entry types (default none)
-  --include (-i): string # Include entry types (default all)
+  --exclude (-x): string = none # Exclude entry types
+  --include (-i): string = all # Include entry types
   --nul-path-separator (-0) # Use the NUL character as a path separator
-  --path-style (-p) # Path style (absolute|all|relative|source-absolute|source-relative)(default relative)
+  --path-style (-p): string = relative # Path style (absolute|all|relative|source-absolute|source-relative)
   --tree (-t) # Print paths as a tree
-  --format (-f): string # Format (<none>|json|yaml)(default json)
+  --format (-f): string = json # Format (<none>|json|yaml)
 
   ...path: path
+
+  --help (-h) # help for chezmoi
 ]
 # Change the attributes and/or type of targets. modifier specifies what to
 # modify.
@@ -401,6 +419,8 @@ export extern "chezmoi chattr" [
 
   attributes: string
   ...target: path@"nu-complete chezmoi managed"
+
+  --help (-h) # help for chezmoi
 ]
 # Execute templates. This is useful for testing templates or for calling
 # chezmoi from other scripts. templates are interpreted as literal templates,
@@ -420,6 +440,8 @@ export extern "chezmoi execute-template" [
   --with-stdin # Set .chezmoi.stdin to the contents of the standard input
 
   ...template: string
+
+  --help (-h) # help for chezmoi
 ]
 # : [
 #   nothing -> nothing
@@ -430,6 +452,8 @@ export extern "chezmoi execute-template" [
 # have entries in the source state. They cannot be externals.
 export extern "chezmoi forget" [
   ...target: path@"nu-complete chezmoi managed"
+
+  --help (-h) # help for chezmoi
 ]
 
 # Print the status of the files and scripts managed by chezmoi in a format
@@ -448,12 +472,14 @@ export extern "chezmoi forget" [
 #  M            | Modified    | Entry was modified | Entry will be modified
 #  R            | Run         | Not applicable     | Script will be run
 export extern "chezmoi status" [
-  --exclude (-x): string # Exclude entry types (default none)
-  --include (-i): string # Include entry types (default all)
+  --exclude (-x): string = none # Exclude entry types
+  --include (-i): string = all # Include entry types
   --init # Recreate config file from template
   --parent-dirs (-P) # Show status of all parent directories
-  --path-style (-p): string # Path style (absolute|relative)(default relative)
-  --recursive (-r) # Recurse into subdirectories (default true)
+  --path-style (-p): string = relative # Path style (absolute|relative)
+  --recursive (-r) = true # Recurse into subdirectories
+
+  --help (-h) # help for chezmoi
 ]
 export alias chst = chezmoi status
 # Launch a shell in the working tree (typically the source directory). chezmoi
@@ -471,4 +497,23 @@ export extern "chezmoi cd" []
 # then print the source directory.
 export extern "chezmoi source-path" [
   path?: path@"nu-complete chezmoi managed"
+
+  --help (-h) # help for chezmoi
+]
+# Pull changes from the source repo and apply any changes.
+# 
+# If update.command is set then chezmoi will run update.command with
+# update.args in the working tree. Otherwise, chezmoi will run git pull --
+# autostash --rebase [--recurse-submodules] , using chezmoi's builtin git if
+# useBuiltinGit is true or if git.command cannot be found in $PATH.
+export extern "chezmoi update" [
+  --apply (-a) = true # Apply after pulling
+  --exclude (-x): string = none # Exclude entry types
+  --include (-i): string = all # Include entry types
+  --init # Recreate config file from template
+  --parent-dirs (-P) # Update all parent directories
+  --recurse-submodules = true # Recursively update submodules
+  --recursive (-r) = true # Recurse into subdirectories
+
+  --help (-h) # help for chezmoi
 ]
