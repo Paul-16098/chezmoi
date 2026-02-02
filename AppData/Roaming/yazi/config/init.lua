@@ -124,13 +124,14 @@ end
 require("bunny"):setup({
     hops = {
         { key = "/", path = "/", },
-        { key = "~", path = "~",                                                               desc = "Home" },
-        { key = "c", path = "~/.config",                                                       desc = "Config files" },
-        { key = "t", path = "~/tools/tools",                                                   desc = "Tools" },
-        { key = "d", path = "~/Downloads",                                                     desc = "Downloads" },
-        { key = "l", path = "~/.local",                                                        desc = "Local" },
+        { key = "~", path = "~", desc = "Home" },
+        { key = "c", path = "~/.config", desc = "Config files" },
+        { key = "t", path = "~/tools/tools", desc = "Tools" },
+        { key = "d", path = "~/Downloads", desc = "Downloads" },
+        { key = "l", path = "~/.local", desc = "Local" },
         { key = "s", path = "~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup", desc = "Startup" },
-        { key = "a", path = "~/AppData/Roaming",                                               desc = "Roaming" }
+        { key = "a", path = "~/AppData/Roaming", desc = "Roaming" },
+        { key = "g", path = "~/OneDrive/文件/git", desc = "Git repos" },
         -- key and path attributes are required, desc is optional
     },
     desc_strategy = "path", -- If desc isn't present, use "path" or "filename", default is "path"
