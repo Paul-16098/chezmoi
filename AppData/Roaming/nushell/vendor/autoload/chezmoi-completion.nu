@@ -70,6 +70,8 @@ export extern "chezmoi add" [
   --use-builtin-git: string@"nu-complete bool" # Use builtin git (default auto)
   --verbose (-v) # Make output more verbose
   --working-tree (-W): path # Set working tree directory
+
+  ...target: path@"nu-complete unmanaged"
 ]
 
 # Interact with age
@@ -1409,6 +1411,14 @@ def "nu-complete managed" [] {
       completion_algorithm: substring
     }
     completions: ((chezmoi managed) | lines | par-each --keep-order { "~/" + ($in) })
+  }
+}
+def "nu-complete unmanaged" [] {
+  {
+    options: {
+      completion_algorithm: substring
+    }
+    completions: ((chezmoi unmanaged) | lines | par-each --keep-order { "~/" + ($in) })
   }
 }
 def "nu-complete managed-hasdiff" [] {
