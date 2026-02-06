@@ -13,14 +13,32 @@
     run   = "%EDITOR% %s"
     desc  = "$EDITOR"
     block = true
-[opener]
-    open = [
-        { run = "xdg-open %s1", desc = "Open", for = "linux" },
-        { run = "open %s", desc = "Open", for = "macos" },
-        { run = 'start "" %s1', desc = "Open", for = "windows", orphan = true },
-        { run = '"C:\Program Files\Sandboxie-Plus\Start.exe" /box:__ask__ %s1', desc = "Open With Sandboxie", for = "windows" },
-        { run = "termux-open %s1", desc = "Open", for = "android" },
-    ]
+
+[[opener.open]]
+    run  = "xdg-open %s1"
+    desc = "Open"
+    for  = "linux"
+
+[[opener.open]]
+    run  = "open %s"
+    desc = "Open"
+    for  = "macos"
+
+[[opener.open]]
+    run    = 'start "" %s1'
+    desc   = "Open"
+    for    = "windows"
+    orphan = true
+
+[[opener.open]]
+    run  = '"C:\Program Files\Sandboxie-Plus\Start.exe" /box:__ask__ %s1'
+    desc = "Open With Sandboxie"
+    for  = "windows"
+
+[[opener.open]]
+    run  = "termux-open %s1"
+    desc = "Open"
+    for  = "android"
 
 [[open.prepend_rules]]
     mime = "application/java-archive"
@@ -93,6 +111,34 @@
 [[plugin.prepend_previewers]]
     url = "*.ipynb"
     run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+    mime = "font/*"
+    run  = "font-sample"
+
+[[plugin.prepend_previewers]]
+    mime = "application/ms-opentype"
+    run  = "font-sample"
+
+[[plugin.prepend_previewers]]
+    url = "*.{otf,ttf,woff,woff2}"
+    run = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    mime = "font/*"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    mime = "application/ms-opentype"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    url = "*.{otf,ttf,woff,woff2}"
+    run = "font-sample"
+
+[[plugin.prepend_previewers]]
+    url = '**/.git/'
+    run = 'preview-git'
 
 [tasks]
     image_alloc = 1073741824

@@ -157,3 +157,12 @@ require("mime-ext.local"):setup {
     -- then fallback to Yazi's preset `mime.local` plugin, which uses `file(1)`
     fallback_file1 = true,
 }
+--- font-sample ---
+require('font-sample'):setup {
+    text = 'ABCDEF abcdef\n0123456789 \noO08 iIlL1 g9qCGQ\n8%& <([{}])>\n.,;: @#$-_="\n== <= >= != ffi\nâéùïøçÃĒÆœ\n및개요これ直楽糸',
+    canvas_size = '750x800',
+    font_size = 80,
+    -- https://imagemagick.org/script/color.php
+    bg = 'white',
+    fg = 'black',
+}

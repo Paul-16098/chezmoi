@@ -1,0 +1,166 @@
+{
+  "$schema": "https://yazi-rs.github.io/schemas/yazi.json",
+  "mgr": {
+    "sort_by": "natural",
+    "show_hidden": true,
+    "show_symlink": false,
+    "linemode": "mtime"
+  },
+  "preview": {
+    "wrap": "yes"
+  },
+  "opener": {
+    "edit": [
+      {
+        "run": "%EDITOR% %s",
+        "desc": "$EDITOR",
+        "block": true
+      }
+    ],
+    "open": [
+      {
+        "run": "xdg-open %s1",
+        "desc": "Open",
+        "for": "linux"
+      },
+      {
+        "run": "open %s",
+        "desc": "Open",
+        "for": "macos"
+      },
+      {
+        "run": "start \"\" %s1",
+        "desc": "Open",
+        "for": "windows",
+        "orphan": true
+      },
+      {
+        "run": "\"C:\\Program Files\\Sandboxie-Plus\\Start.exe\" /box:__ask__ %s1",
+        "desc": "Open With Sandboxie",
+        "for": "windows"
+      },
+      {
+        "run": "termux-open %s1",
+        "desc": "Open",
+        "for": "android"
+      }
+    ]
+  },
+  "open": {
+    "prepend_rules": [
+      {
+        "mime": "application/java-archive",
+        "use": [
+          "open",
+          "extract",
+          "reveal"
+        ]
+      },
+      {
+        "url": "*",
+        "use": [
+          "open",
+          "edit",
+          "reveal"
+        ]
+      }
+    ]
+  },
+  "plugin": {
+    "prepend_fetchers": [
+      {
+        "id": "mime",
+        "url": "local://*",
+        "run": "mime-ext.local",
+        "prio": "high"
+      },
+      {
+        "id": "mime",
+        "url": "remote://*",
+        "run": "mime-ext.remote",
+        "prio": "high"
+      }
+    ],
+    "prepend_preloaders": [
+      {
+        "mime": "{audio,video,image}/*",
+        "run": "mediainfo"
+      },
+      {
+        "mime": "application/subrip",
+        "run": "mediainfo"
+      },
+      {
+        "mime": "application/postscript",
+        "run": "mediainfo"
+      }
+    ],
+    "prepend_previewers": [
+      {
+        "mime": "{audio,video,image}/*",
+        "run": "mediainfo"
+      },
+      {
+        "mime": "application/subrip",
+        "run": "mediainfo"
+      },
+      {
+        "mime": "application/postscript",
+        "run": "mediainfo"
+      },
+      {
+        "url": "*.nu",
+        "run": "piper -- nu --commands \"open --raw \"$1\" | nu-highlight\""
+      },
+      {
+        "url": "*.csv",
+        "run": "code"
+      },
+      {
+        "url": "*.md",
+        "run": "rich-preview"
+      },
+      {
+        "url": "*.rst",
+        "run": "rich-preview"
+      },
+      {
+        "url": "*.ipynb",
+        "run": "rich-preview"
+      }
+    ]
+  },
+  "tasks": {
+    "image_alloc": 1073741824,
+    "plugin": {
+      "prepend_previewers": [
+        {
+          "mime": "font/*",
+          "run": "font-sample"
+        },
+        {
+          "mime": "application/ms-opentype",
+          "run": "font-sample"
+        },
+        {
+          "url": "*.{otf,ttf,woff,woff2}",
+          "run": "font-sample"
+        }
+      ],
+      "prepend_preloaders": [
+        {
+          "mime": "font/*",
+          "run": "font-sample"
+        },
+        {
+          "mime": "application/ms-opentype",
+          "run": "font-sample"
+        },
+        {
+          "url": "*.{otf,ttf,woff,woff2}",
+          "run": "font-sample"
+        }
+      ]
+    }
+  }
+}
