@@ -80,6 +80,18 @@
     mime = "application/postscript"
     run  = "mediainfo"
 
+[[plugin.prepend_preloaders]]
+    mime = "font/*"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    mime = "application/ms-opentype"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    url = "*.{otf,ttf,woff,woff2}"
+    run = "font-sample"
+
 [[plugin.prepend_previewers]]
     mime = "{audio,video,image}/*"
     run  = "mediainfo"
@@ -124,21 +136,29 @@
     url = "*.{otf,ttf,woff,woff2}"
     run = "font-sample"
 
-[[plugin.prepend_preloaders]]
-    mime = "font/*"
-    run  = "font-sample"
-
-[[plugin.prepend_preloaders]]
-    mime = "application/ms-opentype"
-    run  = "font-sample"
-
-[[plugin.prepend_preloaders]]
-    url = "*.{otf,ttf,woff,woff2}"
-    run = "font-sample"
-
 [[plugin.prepend_previewers]]
-    url = '**/.git/'
-    run = 'preview-git'
+    url = "**/.git/"
+    run = "preview-git"
+
+[[plugin.prepend_spotters]]
+    mime = "audio/*"
+    run  = "spot-audio"
+
+[[plugin.prepend_spotters]]
+    mime = "image/*"
+    run  = "spot-image"
+
+[[plugin.prepend_spotters]]
+    url = "video/*"
+    run = "spot-video"
+
+[[plugin.prepend_spotters]]
+    url = "*/"
+    run = "spot"
+
+[[plugin.prepend_spotters]]
+    url = "*"
+    run = "spot"
 
 [tasks]
     image_alloc = 1073741824
