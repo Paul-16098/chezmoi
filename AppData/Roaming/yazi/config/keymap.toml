@@ -522,12 +522,18 @@
     run  = "seek -1"
     desc = "捲動預覽面板向上"
 
-    # [[mgr.keymap]]
-    #     on   = "F"
-    #     run  = "plugin jump-to-char"
-    #     desc = "跳轉到字符"
+[[mgr.keymap]]
+    on = [
+        "F",
+        "j",
+    ]
+    run = "plugin jump-to-char"
+    desc = "跳轉到字符"
 
 [[mgr.keymap]]
-    on   = "F"
-    run  = "plugin fg -- fzf"
+    on = [
+        "F",
+        "g",
+    ]
+    run = "plugin fg -- fzf"
     desc = "按文件名查找文件"
