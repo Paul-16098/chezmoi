@@ -112,6 +112,10 @@ function Yatline.coloreds.get:symlink()
     end
 
     local link_target = h.link_to:strip_prefix(tostring(cx.active.current.cwd))
+    if link_target == nil then
+        -- ya.dbg("link target is nil")
+        return nil
+    end
     local link_target_str = ("symlink:.\\" .. tostring(link_target))
     table.insert(symlink, { link_target_str, th.mgr.cwd:fg() })
     return symlink
