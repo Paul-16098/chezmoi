@@ -133,6 +133,7 @@ require("bunny"):setup({
         { key = "s", path = "~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup", desc = "Startup" },
         { key = "a", path = "~/AppData/Roaming", desc = "Roaming" },
         { key = "g", path = "~/OneDrive/文件/git", desc = "Git repos" },
+        { key = "D", path = "~/OneDrive/文件" }
         -- key and path attributes are required, desc is optional
     },
     desc_strategy = "path", -- If desc isn't present, use "path" or "filename", default is "path"
