@@ -182,9 +182,6 @@ export def app-update []: nothing -> nothing {
   null
 }
 
-def is-git []: nothing -> bool {
-  pwd | path join ".git" | path exists
-}
 # git log wrapper to format output as a table
 #
 # noreply email is filtered out
@@ -195,15 +192,6 @@ def is-git []: nothing -> bool {
 @complete external
 @category git
 export def --wrapped "git log" [...rest: string]: nothing -> table {
-  if not (is-git) {
-    error make {
-      msg: "Not a git repository"
-      labels: [
-        {text: "call by here" span: (metadata $rest).span}
-      ]
-      help: "please run this command in a git repository"
-    }
-  }
   let remote_url = git config get remote.origin.url
     | str replace "git@ssh.gitgud.io:" "https://gitgud.io/"
     | str replace --regex "\\.git$" ""
@@ -252,24 +240,10 @@ export alias gl = git log
 @complete external
 @category git
 export def --wrapped "git pull" [...rest: string]: nothing -> table {
-  if not (is-git) {
-    error make {
-      msg: "Not a git repository"
-      labels: [
-        {text: "call by here" span: (metadata $rest).span}
-      ]
-      help: "please run this command in a git repository"
-    }
-  }
-
-  let old_commit = open "./.git/FETCH_HEAD" | lines | first | parse "{comm}\t{field1}" | get 0.comm
-  run-external git pull ...$rest
-  let new_commit = open "./.git/FETCH_HEAD" | lines | first | parse "{comm}\t{field1}" | get 0.comm
+  let old_commit = git rev-list HEAD -n 1
+  ^git pull --quiet ...$rest
+  let new_commit = git rev-list HEAD -n 1
   git log $"($old_commit)...($new_commit)"
-
-  # let old_sub_commit = git submodule status | lines | par-each { split column " " | first 2 | upsert 0 { str trim --left --char "+" | str trim --left --char "-" } } | par-each { [[sha name]; [$in.0 $in.1]] } | flatten
-  # git submodule update
-  # let new_sub_commit = git submodule status | lines | par-each { split column " " | first 2 | upsert 0 { str trim --left --char "+" | str trim --left --char "-" } } | par-each { [[sha name]; [$in.0 $in.1]] } | flatten  
 }
 export alias gp = git pull
 
@@ -582,9 +556,9 @@ export def "clip copy-image" [
   null
 }
 
-# get meme from yazi and copy to clipboard
+# get meme and copy to clipboard
 export def "meme" [
-  type: string@[fzf yazi nushell] = fzf # what tool to use to pick meme
+  type: string@[fzf yazi nushell] = yazi # what tool to use to pick meme
 ]: nothing -> nothing {
   cd ~\OneDrive\文件\meme
   mut meme_path: list<string> = []

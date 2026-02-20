@@ -5,6 +5,7 @@ export def "config user-aliases" []: nothing -> nothing {
   run-external $env.config.buffer_editor ($self)
 }
 
+alias code = code-insiders
 alias ls = ls --all --threads
 alias ll = ls --long
 alias cargo = cargo auditable
