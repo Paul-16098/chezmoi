@@ -108,7 +108,7 @@ chezmoi/
 1. **使用此倉庫初始化 chezmoi**：
 
    ```bash
-   chezmoi init Paul-16098/chezmoi
+   chezmoi init Paul-16098/Dotfiles
    ```
 
 2. **在應用之前查看更改**：
