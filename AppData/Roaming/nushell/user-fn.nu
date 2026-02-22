@@ -243,6 +243,7 @@ export def --wrapped "git pull" [...rest: string]: nothing -> table {
   let old_commit = git rev-list HEAD -n 1
   ^git pull --quiet ...$rest
   let new_commit = git rev-list HEAD -n 1
+  print --stderr $"Pulled latest changes. Showing commits from (ansi green)($old_commit)(ansi reset) to (ansi green)($new_commit)(ansi reset):"
   git log $"($old_commit)...($new_commit)"
 }
 export alias gp = git pull

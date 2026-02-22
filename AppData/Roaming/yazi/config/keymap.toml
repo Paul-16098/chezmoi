@@ -13,7 +13,11 @@
 [[mgr.keymap]]
     on   = "v"
     run  = "paste"
-    desc = "粘貼"
+    desc = "貼上已複製的檔案"
+[[mgr.keymap]]
+    on   = "V"
+    run  = "paste --force"
+    desc = "貼上已複製的檔案(如果目標位置已存在則覆蓋)"
 
 [[mgr.keymap]]
     on   = "x"
