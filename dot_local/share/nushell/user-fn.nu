@@ -119,35 +119,28 @@ export def app-update []: nothing -> nothing {
     cargo install-update --all o+e>| job send 0
   }
   job spawn --tag app-update-coreutils-completions {
-    "" | save --force ($NU_CONFIG_DIR | path join completions/coreutils.nu)
+    const COREUTILS_COMPLETIONS_PATH = ($nu.user-autoload-dirs.0 | path join completions-coreutils.nu)
+    "" | save --force $COREUTILS_COMPLETIONS_PATH
     ^coreutils --list | decode utf-8 | lines | par-each --keep-order {
       if ($in == '[') { return }
       let dis = (^coreutils $in --help | str replace --regex r#'\n\nUsage[\s\S]*$'# '' | lines | each { '# ' + $in } | str join "\n")
-      $"($dis)\nexport extern \"coreutils ($in)\" [\n  --help \(-h) # get help information\n  --version \(-V) # get version information\n]\n" | save --append ($NU_CONFIG_DIR | path join completions/coreutils.nu)
+      $"($dis)\nexport extern \"coreutils ($in)\" [\n  --help \(-h) # get help information\n  --version \(-V) # get version information\n]\n" | save --append $COREUTILS_COMPLETIONS_PATH
     }
   }
-  job spawn --tag app-update-all-completions {
-    # all-completions
-    const ALL_COMPLETIONS_PATH = ($NU_CONFIG_DIR | path join vendor/autoload/all-completions.nu)
-    "" | save --force $ALL_COMPLETIONS_PATH
-    ls ($NU_CONFIG_DIR | path join completions) | par-each {|el| $"export use ($el.name) *\n" | save --append $ALL_COMPLETIONS_PATH }
-    # glob `~/OneDrive/文件/git/nu_scripts/custom-completions/*/*.nu` | par-each { $"export use ($in) *\n" | save -a $ALL_COMPLETIONS_PATH }
-  }
+
   job spawn --tag app-update-atuin {
     # atuin
-    const ATUIN_INIT_PATH: path = "~/.local/share/atuin/init.nu"
-    atuin init --disable-up-arrow --disable-ctrl-r nu | save --force $ATUIN_INIT_PATH
+    atuin init --disable-up-arrow --disable-ctrl-r nu | save --force ($nu.user-autoload-dirs.0 | path join atuin.nu)
   }
   job spawn --tag app-update-starship {
     # starship
-    mkdir ($NU_CONFIG_DIR | path join vendor/autoload)
-    starship init nu | save --force ($NU_CONFIG_DIR | path join vendor/autoload/starship.nu)
+    starship init nu | save --force ($nu.user-autoload-dirs.0 | path join starship.nu)
   }
   job spawn --tag app-update-carapace {
     # carapace
     mkdir $nu.cache-dir
     # carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
-    carapace _carapace nushell | save --force ($NU_CONFIG_DIR | path join vendor/autoload/carapace.nu)
+    carapace _carapace nushell | save --force ($nu.user-autoload-dirs.0 | path join carapace.nu)
   }
   job spawn --tag app-update-yazi {
     cargo install --git https://github.com/sxyazi/yazi.git yazi-build o+e>| job send 0
@@ -163,8 +156,9 @@ export def app-update []: nothing -> nothing {
       print --raw (job recv --timeout 0sec)
     }
   } catch {|err|
+    let err = $err.json | from json
     if (
-      ($err.json | from json) == {
+      $err == {
         msg: "No message was received in the requested time interval"
         labels: []
         code: "nu::shell::job::recv_timeout"

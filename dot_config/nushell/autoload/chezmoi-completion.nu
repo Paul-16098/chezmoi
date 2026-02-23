@@ -71,7 +71,7 @@ export extern "chezmoi add" [
   --verbose (-v) # Make output more verbose
   --working-tree (-W): path # Set working tree directory
 
-  ...target: path@"nu-complete unmanaged"
+  ...target: path
 ]
 
 # Interact with age
@@ -1216,6 +1216,8 @@ export extern "chezmoi status" [
   --use-builtin-git: string@"nu-complete bool" # Use builtin git (default auto)
   --verbose (-v) # Make output more verbose
   --working-tree (-W): path # Set working tree directory
+
+  ...target: path@"nu-complete managed"
 ]
 
 # Print the target path of a source path
@@ -1419,14 +1421,7 @@ def "nu-complete managed" []: nothing -> record<options: record<completion_algor
     completions: ((chezmoi managed) | lines | par-each --keep-order { "~/" + ($in) })
   }
 }
-def "nu-complete unmanaged" []: nothing -> record<options: record<completion_algorithm: string>, completions: any> {
-  {
-    options: {
-      completion_algorithm: substring
-    }
-    completions: ((chezmoi unmanaged) | lines | par-each --keep-order { "~/" + ($in) })
-  }
-}
+
 def "nu-complete managed-hasdiff" []: nothing -> record<options: record<completion_algorithm: string>, completions: any> {
   # if has password, use unmanaged files for completion
   if false {
@@ -1446,7 +1441,6 @@ export alias chad = chezmoi add
 export alias chap = chezmoi apply
 export alias chdf = chezmoi diff
 export alias chda = chezmoi data
-export alias chs = chezmoi status
 export alias ched = chezmoi edit
 export alias chst = chezmoi status
 export alias chm = chezmoi merge
