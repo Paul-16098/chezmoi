@@ -43,14 +43,14 @@ source "~/.local/share/atuin/init.nu"
 # overlay use ($nu.data-dir | path join "alias-finder/alias-finder.nu")
 
 # user functions
-overlay use ($NU_CONFIG_DIR | path join user-fn.nu)
+overlay use ($nu.data-dir | path join user-fn.nu)
 
 # hooks
-overlay use ($NU_CONFIG_DIR | path join hooks.nu)
-overlay use ($NU_CONFIG_DIR | path join hook_display_output.nu)
+overlay use ($nu.data-dir | path join hooks.nu)
+overlay use ($nu.data-dir | path join hook_display_output.nu)
 
 # keybindings
-overlay use ($NU_CONFIG_DIR | path join keybindings.nu)
+overlay use ($nu.data-dir | path join keybindings.nu)
 
 # nupm
 overlay use nupm/nupm/ --prefix

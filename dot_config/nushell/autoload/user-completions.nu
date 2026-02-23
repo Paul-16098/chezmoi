@@ -99,7 +99,7 @@ export extern es [
 
 # java completions | Java 补全
 def "nu-complete java" []: nothing -> record {
-  use script/complete-tools.nu complete-file
+  use complete-tools.nu complete-file
   complete-file java
 }
 
@@ -153,7 +153,7 @@ def "nu-complete bz-switch" []: nothing -> list<record> {
 }
 
 def "nu-complete zip" []: nothing -> record {
-  use script/complete-tools.nu complete-file
+  use complete-tools.nu complete-file
   complete-file "{zip,7z,apk}"
 }
 
@@ -181,7 +181,7 @@ def "nu-complete sudo-command" []: nothing -> list<record> {
 }
 
 def "nu-complete exec" []: nothing -> record {
-  use script/complete-tools.nu complete-file
+  use complete-tools.nu complete-file
   complete-file "{exe,bat,cmd,ps1}"
 }
 

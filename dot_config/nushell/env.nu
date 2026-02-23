@@ -4,9 +4,7 @@ $env.COLORTERM = "truecolor"
 
 overlay new setup-paths
 
-const NU_LIB_DIRS = $NU_LIB_DIRS ++ [($nu.data-dir)]
 const NU_PLUGIN_DIRS = $NU_PLUGIN_DIRS ++ ["~/.cargo/bin/"]
-const NU_CONFIG_DIR = $nu.config-path | path dirname
 
 load-env {
   PATH: ($env.PATH | par-each --keep-order { path expand } | uniq)

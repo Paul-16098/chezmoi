@@ -278,7 +278,7 @@ export def --env rust-debug [lv: string@rust-debug-complete]: nothing -> nothing
 }
 
 def "nu-complete exe" []: nothing -> record {
-  use script/complete-tools.nu complete-file
+  use complete-tools.nu complete-file
   complete-file exe
 }
 
@@ -492,7 +492,7 @@ export def reload-config []: nothing -> string {
   ] | flatten | flatten | str join "\n"
 }
 def "nu-complete image" []: nothing -> record {
-  use script/complete-tools.nu complete-mime
+  use complete-tools.nu complete-mime
   complete-mime image/*
 }
 
