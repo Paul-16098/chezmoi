@@ -21,6 +21,12 @@
     orphan = true
 
 [[opener.open]]
+    run    = 'sudo start "" %s1'
+    desc   = "Open with sudo"
+    for    = "windows"
+    orphan = true
+
+[[opener.open]]
     run  = '"C:\Program Files\Sandboxie-Plus\Start.exe" /box:__ask__ %s1'
     desc = "Open With Sandboxie"
     for  = "windows"
