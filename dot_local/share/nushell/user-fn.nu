@@ -149,10 +149,24 @@ export def app-update []: nothing -> nothing {
   job spawn --tag app-update-nufmt {
     cargo install --git https://github.com/nushell/nufmt nufmt o+e>| job send 0
   }
+  job spawn --tag app-update-nu {
+    cargo install --locked --git https://github.com/nushell/nushell.git nu o+e>| job send 0
+  }
+  job spawn --tag app-update-nu-plugins {
+    const NU_PLUGINS = [nu_plugin_formats nu_plugin_polars nu_plugin_query]
+    $NU_PLUGINS | par-each {|plugin|
+      job spawn --tag $"app-update-nu-plugin-($plugin)" {
+        cargo install --locked $plugin o+e>| job send 0
+        plugin add $"~/.cargo/bin/($plugin).exe"
+      }
+    }
+  }
   sleep 1sec
   try {
     loop {
-      sleep 0.5sec
+      if (job list | length) == 0 {
+        break
+      }
       print --raw (job recv --timeout 0sec)
     }
   } catch {|err|
