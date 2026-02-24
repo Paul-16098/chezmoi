@@ -100,8 +100,38 @@ export def --wrapped es [...rest: string]: nothing -> table {
   }
 }
 
-# update rustup, pnpm,... and completions
-export def app-update []: nothing -> nothing {
+export def app-update [
+  update_job: table<id: string, job: closure> # a table of update jobs, each row should have id and job columns, job is a block to execute the update, id is a unique identifier for the job
+  conf?: record # configuration for update jobs, conf.<id>.* for job <id>, conf.* for all jobs
+  ...rest: any # a rest to all job
+]: nothing -> nothing {
+  let conf = $conf | default {}
+
+  let update_job = ($update_job | default [[id job]; ])
+
+  print "Starting app updates..."
+  print $"Total jobs to run: ($update_job | length)"
+
+  for row in $update_job {
+    let job_conf = ($conf | get --optional * | default {}) | merge ($conf | get --optional $row.id | default {})
+
+    print $"Starting job: (ansi gb)($row.id)(ansi reset) with config: ($job_conf | to nuon | nu-highlight)"
+
+    job spawn --tag $row.id {
+      let o = ($job_conf | do --ignore-errors $row.job ...$rest | default "")
+      $"(ansi gb)($row.id)(ansi reset)#[($o)]" | job send 0
+    }
+  }
+
+  for i in 1..($update_job | length) {
+    print (job recv)
+  }
+  print "\a"
+
+  null
+}
+
+export def app-update-old [] {
   job spawn --tag app-update-rustup {
     rustup self update o+e>| job send 0
   }
@@ -118,15 +148,15 @@ export def app-update []: nothing -> nothing {
   job spawn --tag app-update-cargo-packages {
     cargo install-update --all o+e>| job send 0
   }
-  job spawn --tag app-update-coreutils-completions {
-    const COREUTILS_COMPLETIONS_PATH = ($nu.user-autoload-dirs.0 | path join completions-coreutils.nu)
-    "" | save --force $COREUTILS_COMPLETIONS_PATH
-    ^coreutils --list | decode utf-8 | lines | par-each --keep-order {
-      if ($in == '[') { return }
-      let dis = (^coreutils $in --help | str replace --regex r#'\n\nUsage[\s\S]*$'# '' | lines | each { '# ' + $in } | str join "\n")
-      $"($dis)\nexport extern \"coreutils ($in)\" [\n  --help \(-h) # get help information\n  --version \(-V) # get version information\n]\n" | save --append $COREUTILS_COMPLETIONS_PATH
-    }
-  }
+  # job spawn --tag app-update-coreutils-completions {
+  #   const COREUTILS_COMPLETIONS_PATH = ($nu.user-autoload-dirs.0 | path join completions-coreutils.nu)
+  #   "" | save --force $COREUTILS_COMPLETIONS_PATH
+  #   ^coreutils --list | decode utf-8 | lines | par-each --keep-order {
+  #     if ($in == '[') { return }
+  #     let dis = (^coreutils $in --help | str replace --regex r#'\n\nUsage[\s\S]*$'# '' | lines | each { '# ' + $in } | str join "\n")
+  #     $"($dis)\nexport extern \"coreutils ($in)\" [\n  --help \(-h) # get help information\n  --version \(-V) # get version information\n]\n" | save --append $COREUTILS_COMPLETIONS_PATH
+  #   }
+  # }
 
   job spawn --tag app-update-atuin {
     # atuin
@@ -152,21 +182,34 @@ export def app-update []: nothing -> nothing {
   job spawn --tag app-update-nu {
     cargo install --locked --git https://github.com/nushell/nushell.git nu o+e>| job send 0
   }
+  job spawn --tag app-update-nu-core-plugins {
+    [nu_plugin_formats nu_plugin_polars nu_plugin_query] | par-each {|plugin|
+      cargo install --locked --git https://github.com/nushell/nushell.git $plugin o+e>| job send 0
+      plugin add $"~/.cargo/bin/($plugin).exe"
+    }
+  }
   job spawn --tag app-update-nu-plugins {
-    const NU_PLUGINS = [nu_plugin_formats nu_plugin_polars nu_plugin_query]
-    $NU_PLUGINS | par-each {|plugin|
-      job spawn --tag $"app-update-nu-plugin-($plugin)" {
-        cargo install --locked $plugin o+e>| job send 0
-        plugin add $"~/.cargo/bin/($plugin).exe"
+    [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | par-each {|plugin|
+      match $plugin.type {
+        cargo => {
+          cargo install --locked $plugin.name o+e>| job send 0
+
+          plugin add $"~/.cargo/bin/($plugin.name).exe"
+        }
+        git => {
+          let name = $plugin.name | split row "/" | last
+
+          cargo install --locked --git $plugin.name o+e>| job send 0
+
+          plugin add $"~/.cargo/bin/($name).exe"
+        }
       }
     }
   }
+
   sleep 1sec
   try {
     loop {
-      if (job list | length) == 0 {
-        break
-      }
       print --raw (job recv --timeout 0sec)
     }
   } catch {|err|
@@ -386,20 +429,6 @@ export def pause []: nothing -> nothing {
   print "Press any key to continue..."
   input listen --types [key]
   null
-}
-# install plugin via cargo binstall and add to plugins
-export def "plugin install" [
-  name: string # nu_plugin_XXX
-]: nothing -> nothing {
-  cargo binstall $name
-  plugin add $"~/.cargo/bin/($name).exe"
-}
-# uninstall plugin via cargo uninstall and remove from plugins
-export def "plugin uninstall" [
-  name: string # just XXX not nu_plugin_XXX
-]: nothing -> nothing {
-  plugin rm $name
-  cargo uninstall $"nu_plugin_($name)"
 }
 
 def "nu-complete steamcmd" []: nothing -> record {

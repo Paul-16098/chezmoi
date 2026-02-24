@@ -7,9 +7,12 @@ explicit_optional_access   = false
 [groups]
 
 [rules]
-    explicit_long_flags         = "warning"
-    wrap_external_with_complete = "hint"
-    unchecked_get_index         = "off"
-    catch_builtin_error_try     = "hint"
+    # id = "off|hint|warning|error"
+    unchecked_cell_path_index   = "hint"
+    max_positional_params       = "off"
+    redundant_nu_subprocess     = "warning"
+    pipe_spacing                = "off"
     non_final_failure_check     = "hint"
-    max_function_body_length    = "off"
+    unchecked_get_index         = "hint"
+    wrap_external_with_complete = "hint"
+    catch_builtin_error_try     = "hint"
