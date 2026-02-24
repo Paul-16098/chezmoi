@@ -90,14 +90,8 @@ export def rm-app [
 }
 
 # es wrapper to always output json parsed table
-@complete external
 export def --wrapped es [...rest: string]: nothing -> table {
-  let o = ^es ...$rest "-instance" 1.5a "--json"
-  if ('-h' in $rest or "--help" in $rest) {
-    $o
-  } else {
-    $o | from json
-  }
+  ^es "-instance" 1.5a ...$rest "--json"
 }
 
 export def app-update [

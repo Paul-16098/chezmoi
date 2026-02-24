@@ -30,7 +30,7 @@ export extern eget [
 ]
 
 # everything cli | Everything 命令行工具
-export extern es [
+export extern _es [
   search?: string
   --regex (-r): string # search using regular expressions | 使用正则表达式搜索
   --case (-i) # match case | 区分大小写
