@@ -180,7 +180,7 @@ export def app-update-old [] {
     cargo install --git https://github.com/nushell/nufmt nufmt o+e>| job send 0
   }
   job spawn --tag app-update-nu {
-    cargo install --locked --git https://github.com/nushell/nushell.git nu o+e>| job send 0
+    cargo install --locked --git https://github.com/nushell/nushell.git nu -F full o+e>| job send 0
   }
   job spawn --tag app-update-nu-core-plugins {
     [nu_plugin_formats nu_plugin_polars nu_plugin_query] | par-each {|plugin|
