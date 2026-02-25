@@ -68,27 +68,6 @@ export def --wrapped whois [
   }
 }
 
-# get app path and remove app
-export def rm-app [
-  app_name: string # name of the app to remove
-]: nothing -> nothing {
-  let app_path = (which $app_name | get path)
-  log debug $"App path for ($app_name): ($app_path)"
-  if ($app_path | length) == 0 {
-    log error $"App ($app_name) not found."
-    return
-  }
-  $app_name | each { $in | path expand } | each {
-    log debug $"Expanded app path: ($in)"
-    if ($in | path exists) {
-      rm --interactive $in
-      log info $"Removed app at path: ($in)"
-    } else {
-      log warning $"Path does not exist: ($in)"
-    }
-  }
-}
-
 # es wrapper to always output json parsed table
 export def --wrapped es [...rest: string]: nothing -> table {
   ^es "-instance" 1.5a ...$rest "--json"
@@ -131,9 +110,6 @@ export def app-update-old [] {
   }
   job spawn --tag "app-update-rust-toolchains" {
     rustup update o+e>| job send 0
-  }
-  job spawn --tag app-update-pnpm {
-    pnpm self-update o+e>| job send 0
   }
   job spawn --tag app-update-airshipper {
     airshipper upgrade o+e>| job send 0
@@ -183,7 +159,7 @@ export def app-update-old [] {
     }
   }
   job spawn --tag app-update-nu-plugins {
-    [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | par-each {|plugin|
+    [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | each {|plugin|
       match $plugin.type {
         cargo => {
           cargo install --locked $plugin.name o+e>| job send 0
