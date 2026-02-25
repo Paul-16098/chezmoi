@@ -105,18 +105,20 @@ export def app-update [
 }
 
 export def app-update-old [] {
-  job spawn --tag app-update-rustup {
-    rustup self update o+e>| job send 0
+  use jobd.nu
+
+  jobd spawn app-update-rustup {
+    rustup self update
   }
-  job spawn --tag "app-update-rust-toolchains" {
-    rustup update o+e>| job send 0
+  jobd spawn app-update-rust-toolchains {
+    rustup update
   }
-  job spawn --tag app-update-airshipper {
-    airshipper upgrade o+e>| job send 0
-    airshipper update o+e>| job send 0
+  jobd spawn app-update-airshipper {
+    airshipper upgrade
+    airshipper update
   }
-  job spawn --tag app-update-cargo-packages {
-    cargo install-update --all o+e>| job send 0
+  jobd spawn app-update-cargo-packages {
+    cargo install-update --all
   }
   # job spawn --tag app-update-coreutils-completions {
   #   const COREUTILS_COMPLETIONS_PATH = ($nu.user-autoload-dirs.0 | path join completions-coreutils.nu)
@@ -128,48 +130,46 @@ export def app-update-old [] {
   #   }
   # }
 
-  job spawn --tag app-update-atuin {
-    # atuin
+  jobd spawn app-update-atuin {
     atuin init --disable-up-arrow --disable-ctrl-r nu | save --force ($nu.user-autoload-dirs.0 | path join atuin.nu)
   }
-  job spawn --tag app-update-starship {
-    # starship
+  jobd spawn app-update-starship {
     starship init nu | save --force ($nu.user-autoload-dirs.0 | path join starship.nu)
   }
-  job spawn --tag app-update-carapace {
-    # carapace
-    mkdir $nu.cache-dir
-    # carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+  jobd spawn app-update-carapace {
     carapace _carapace nushell | save --force ($nu.user-autoload-dirs.0 | path join carapace.nu)
   }
-  job spawn --tag app-update-yazi {
-    cargo install --git https://github.com/sxyazi/yazi.git yazi-build o+e>| job send 0
-    ya pkg upgrade o+e>| job send 0
+  jobd spawn app-update-yazi {
+    cargo install --git https://github.com/sxyazi/yazi.git yazi-build
+    ya pkg upgrade
   }
-  job spawn --tag app-update-nufmt {
-    cargo install --git https://github.com/nushell/nufmt nufmt o+e>| job send 0
+  jobd spawn app-update-nufmt {
+    cargo install --git https://github.com/nushell/nufmt nufmt
   }
-  job spawn --tag app-update-nu {
-    cargo install --locked --git https://github.com/nushell/nushell.git nu -F full o+e>| job send 0
+  jobd spawn app-update-nu {
+    cargo install --locked --git https://github.com/nushell/nushell.git nu -F full
   }
-  job spawn --tag app-update-nu-core-plugins {
-    [nu_plugin_formats nu_plugin_polars nu_plugin_query] | par-each {|plugin|
-      cargo install --locked --git https://github.com/nushell/nushell.git $plugin o+e>| job send 0
+  [nu_plugin_formats nu_plugin_polars nu_plugin_query] | each {|plugin|
+    jobd spawn $"app-update-nu-core-plugins-($plugin)" {
+      cargo install --locked --git https://github.com/nushell/nushell.git $plugin
       plugin add $"~/.cargo/bin/($plugin).exe"
     }
   }
-  job spawn --tag app-update-nu-plugins {
-    [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | each {|plugin|
-      match $plugin.type {
-        cargo => {
-          cargo install --locked $plugin.name o+e>| job send 0
+
+  [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | each {|plugin|
+    match $plugin.type {
+      cargo => {
+        jobd spawn $"app-update-nu-plugins-($plugin.name)" {
+          cargo install --locked $plugin.name
 
           plugin add $"~/.cargo/bin/($plugin.name).exe"
         }
-        git => {
+      }
+      git => {
+        jobd spawn $"app-update-nu-plugins-($plugin.name)" {
           let name = $plugin.name | split row "/" | last
 
-          cargo install --locked --git $plugin.name o+e>| job send 0
+          cargo install --locked --git $plugin.name
 
           plugin add $"~/.cargo/bin/($name).exe"
         }
@@ -177,29 +177,10 @@ export def app-update-old [] {
     }
   }
 
-  sleep 1sec
-  try {
-    loop {
-      print --raw (job recv --timeout 0sec)
-    }
-  } catch {|err|
-    let err = $err.json | from json
-    if (
-      $err == {
-        msg: "No message was received in the requested time interval"
-        labels: []
-        code: "nu::shell::job::recv_timeout"
-        url: null
-        help: "No message arrived within the specified time limit"
-        inner: []
-      }
-    ) {
-      print "All updates completed."
-      print "\a"
-    } else {
-      error make $err
-    }
-  }
+  jobd wait
+
+  print "All updates completed."
+  print "\a"
   null
 }
 
@@ -599,4 +580,8 @@ export def "meme" [
   }
 
   clip copy-image ...$meme_path
+}
+
+export def --wrapped "docker compose ls" [...rest: string]: nothing -> table {
+  ^docker compose ls --format json ...$rest | from json
 }
