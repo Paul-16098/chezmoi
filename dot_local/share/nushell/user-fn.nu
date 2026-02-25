@@ -596,3 +596,11 @@ export def --wrapped "docker compose ps" [...rest: string]: nothing -> table {
 export def --wrapped "docker compose stats" [...rest: string]: nothing -> table {
   ^docker compose stats --no-trunc --no-stream --format json ...$rest | from json
 }
+@complete external
+export def --wrapped "docker compose version" [...rest: string]: nothing -> record {
+  ^docker compose version --format json ...$rest | from json
+}
+@complete external
+export def --wrapped "docker compose volumes" [...rest: string]: nothing -> table {
+  ^docker compose volumes --format json ...$rest | from json
+}
