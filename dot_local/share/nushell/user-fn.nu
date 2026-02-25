@@ -585,3 +585,6 @@ export def "meme" [
 export def --wrapped "docker compose ls" [...rest: string]: nothing -> table {
   ^docker compose ls --format json ...$rest | from json
 }
+export def --wrapped "docker compose ps" [...rest: string]: nothing -> table {
+  ^docker compose ps --format json ...$rest | from json
+}
