@@ -582,12 +582,15 @@ export def "meme" [
   clip copy-image ...$meme_path
 }
 
+@complete external
 export def --wrapped "docker compose ls" [...rest: string]: nothing -> table {
   ^docker compose ls --format json ...$rest | from json
 }
+@complete external
 export def --wrapped "docker compose ps" [...rest: string]: nothing -> table {
   ^docker compose ps --no-trunc --format json ...$rest | from json
 }
+@complete external
 export def --wrapped "docker compose stats" [...rest: string]: nothing -> table {
   ^docker compose stats --no-trunc --no-stream --format json ...$rest | from json
 }
