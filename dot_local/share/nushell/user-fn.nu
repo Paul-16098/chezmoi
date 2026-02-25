@@ -588,7 +588,9 @@ export def --wrapped "docker compose ls" [...rest: string]: nothing -> table {
 }
 @complete external
 export def --wrapped "docker compose ps" [...rest: string]: nothing -> table {
-  ^docker compose ps --no-trunc --format json ...$rest | from json
+  ^docker compose ps --no-trunc --format json ...$rest | from json | update RunningFor {
+    date from-human
+  }
 }
 @complete external
 export def --wrapped "docker compose stats" [...rest: string]: nothing -> table {
