@@ -130,13 +130,13 @@ export def app-update-old [] {
   #   }
   # }
 
-  jobd spawn app-update-atuin {
+  job spawn --tag app-update-atuin {
     atuin init --disable-up-arrow --disable-ctrl-r nu | save --force ($nu.user-autoload-dirs.0 | path join atuin.nu)
   }
-  jobd spawn app-update-starship {
+  job spawn --tag app-update-starship {
     starship init nu | save --force ($nu.user-autoload-dirs.0 | path join starship.nu)
   }
-  jobd spawn app-update-carapace {
+  job spawn --tag app-update-carapace {
     carapace _carapace nushell | save --force ($nu.user-autoload-dirs.0 | path join carapace.nu)
   }
   jobd spawn app-update-yazi {
@@ -152,7 +152,6 @@ export def app-update-old [] {
   [nu_plugin_formats nu_plugin_polars nu_plugin_query] | each {|plugin|
     jobd spawn $"app-update-nu-core-plugins-($plugin)" {
       cargo install --locked --git https://github.com/nushell/nushell.git $plugin
-      plugin add $"~/.cargo/bin/($plugin).exe"
     }
   }
 
@@ -161,8 +160,6 @@ export def app-update-old [] {
       cargo => {
         jobd spawn $"app-update-nu-plugins-($plugin.name)" {
           cargo install --locked $plugin.name
-
-          plugin add $"~/.cargo/bin/($plugin.name).exe"
         }
       }
       git => {
@@ -170,8 +167,6 @@ export def app-update-old [] {
           let name = $plugin.name | split row "/" | last
 
           cargo install --locked --git $plugin.name
-
-          plugin add $"~/.cargo/bin/($name).exe"
         }
       }
     }

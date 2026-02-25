@@ -51,6 +51,11 @@
     desc = "Extract with Bandizip"
     for  = "windows"
 
+[[opener.nodejs]]
+    run    = 'nu --commands "node %s;pause"'
+    desc   = "Run with Node.js"
+    block  = true
+
 [[open.rules]]
     url = "*.exe"
     use = [
@@ -105,6 +110,7 @@
     # code
     mime = "*/javascript"
     use = [
+        "nodejs",
         "edit",
         "reveal",
     ]
