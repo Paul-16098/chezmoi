@@ -374,15 +374,16 @@ export def get-dll [
   } | flatten
 }
 
-alias nu_ps = ps
+export alias nu_ps = ps
 # processes wrapper to filter by name
 export def ps [
   name?: string # process name to filter
+  --long (-l)
 ]: nothing -> table {
   if $name == null {
-    nu_ps
+    nu_ps --long=$long
   } else {
-    nu_ps | where name =~ $name
+    nu_ps --long=$long | where name =~ $name
   } | sort-by mem virtual cpu --reverse
 }
 
