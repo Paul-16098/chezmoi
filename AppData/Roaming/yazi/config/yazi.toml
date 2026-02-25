@@ -52,9 +52,9 @@
     for  = "windows"
 
 [[opener.nodejs]]
-    run    = 'nu --commands "node %s;pause"'
-    desc   = "Run with Node.js"
-    block  = true
+    run   = 'nu --commands "node %s;pause"'
+    desc  = "Run with Node.js"
+    block = true
 
 [[open.rules]]
     url = "*.exe"
@@ -163,50 +163,7 @@
     url = "*/"
     run = "git"
 
-[[plugin.prepend_preloaders]]
-    mime = "{audio,video,image}/*"
-    run  = "mediainfo"
-
-[[plugin.prepend_preloaders]]
-    mime = "application/subrip"
-    run  = "mediainfo"
-
-[[plugin.prepend_preloaders]]
-    mime = "application/postscript"
-    run  = "mediainfo"
-
-[[plugin.prepend_preloaders]]
-    mime = "font/*"
-    run  = "font-sample"
-
-[[plugin.prepend_preloaders]]
-    mime = "application/ms-opentype"
-    run  = "font-sample"
-
-[[plugin.prepend_preloaders]]
-    url = "*.{otf,ttf,woff,woff2}"
-    run = "font-sample"
-
-[[plugin.prepend_previewers]]
-    mime = "{audio,video,image}/*"
-    run  = "mediainfo"
-
-[[plugin.prepend_previewers]]
-    mime = "application/subrip"
-    run  = "mediainfo"
-
-[[plugin.prepend_previewers]]
-    mime = "application/postscript"
-    run  = "mediainfo"
-
-[[plugin.prepend_previewers]]
-    url = "*.{nu,nuon}"
-    run = 'faster-piper --rely-on-preloader'
-
-[[plugin.prepend_preloaders]]
-    url = "*.{nu,nuon}"
-    run = 'faster-piper -- nu --commands "open --raw "$1" | nu-highlight"'
-
+# previewers
 [[plugin.prepend_previewers]]
     url = "*.csv"
     run = "code"
@@ -235,6 +192,56 @@
     url = "**/.git/"
     run = "preview-git"
 
+[[plugin.prepend_previewers]]
+    mime = "{audio,video,image}/*"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    mime = "application/subrip"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    mime = "application/postscript"
+    run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+    url = "*.{nu,nuon}"
+    run = 'faster-piper --rely-on-preloader'
+
+[[plugin.prepend_previewers]]
+    url = "*.bat"
+    run  = "code"
+
+# preloaders
+[[plugin.prepend_preloaders]]
+    url = "*.{nu,nuon}"
+    run = 'faster-piper -- nu --commands "open --raw "$1" | nu-highlight"'
+
+[[plugin.prepend_preloaders]]
+    mime = "{audio,video,image}/*"
+    run  = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+    mime = "application/subrip"
+    run  = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+    mime = "application/postscript"
+    run  = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+    mime = "font/*"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    mime = "application/ms-opentype"
+    run  = "font-sample"
+
+[[plugin.prepend_preloaders]]
+    url = "*.{otf,ttf,woff,woff2}"
+    run = "font-sample"
+
+# spotters
 [[plugin.prepend_spotters]]
     mime = "audio/*"
     run  = "spot-audio"
