@@ -65,6 +65,13 @@
     ]
 
 [[open.rules]]
+    mime = "image/gif"
+    use = [
+        "play",
+        "reveal",
+    ]
+
+[[open.rules]]
     # image
     mime = "image/*"
     use = [
@@ -210,7 +217,7 @@
 
 [[plugin.prepend_previewers]]
     url = "*.bat"
-    run  = "code"
+    run = "code"
 
 # preloaders
 [[plugin.prepend_preloaders]]
