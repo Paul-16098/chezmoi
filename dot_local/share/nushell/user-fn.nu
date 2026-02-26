@@ -146,8 +146,11 @@ export def app-update [] {
   jobd spawn app-update-nufmt {
     cargo install --git https://github.com/nushell/nufmt nufmt
   }
-  jobd spawn app-update-nu {
-    cargo install --locked --git https://github.com/nushell/nushell.git nu -F full
+  job spawn --tag app-update-nu {
+    if (gh api repos/nushell/nushell/commits | from json | first | get sha) != (version | get commit_hash) {
+      print "A new version of NuShell is available, run for update:\a"
+      print ("cargo install --locked --git https://github.com/nushell/nushell.git nu -F full" | nu-highlight)
+    }
   }
   [nu_plugin_formats nu_plugin_polars nu_plugin_query] | each {|plugin|
     jobd spawn $"app-update-nu-core-plugins-($plugin)" {
