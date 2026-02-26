@@ -73,38 +73,38 @@ export def --wrapped es [...rest: string]: nothing -> table {
   ^es "-instance" 1.5a ...$rest "--json"
 }
 
-export def app-update [
-  update_job: table<id: string, job: closure> # a table of update jobs, each row should have id and job columns, job is a block to execute the update, id is a unique identifier for the job
-  conf?: record # configuration for update jobs, conf.<id>.* for job <id>, conf.* for all jobs
-  ...rest: any # a rest to all job
-]: nothing -> nothing {
-  let conf = $conf | default {}
+# export def app-update [
+#   update_job: table<id: string, job: closure> # a table of update jobs, each row should have id and job columns, job is a block to execute the update, id is a unique identifier for the job
+#   conf?: record # configuration for update jobs, conf.<id>.* for job <id>, conf.* for all jobs
+#   ...rest: any # a rest to all job
+# ]: nothing -> nothing {
+#   let conf = $conf | default {}
 
-  let update_job = ($update_job | default [[id job]; ])
+#   let update_job = ($update_job | default [[id job]; ])
 
-  print "Starting app updates..."
-  print $"Total jobs to run: ($update_job | length)"
+#   print "Starting app updates..."
+#   print $"Total jobs to run: ($update_job | length)"
 
-  for row in $update_job {
-    let job_conf = ($conf | get --optional * | default {}) | merge ($conf | get --optional $row.id | default {})
+#   for row in $update_job {
+#     let job_conf = ($conf | get --optional * | default {}) | merge ($conf | get --optional $row.id | default {})
 
-    print $"Starting job: (ansi gb)($row.id)(ansi reset) with config: ($job_conf | to nuon | nu-highlight)"
+#     print $"Starting job: (ansi gb)($row.id)(ansi reset) with config: ($job_conf | to nuon | nu-highlight)"
 
-    job spawn --tag $row.id {
-      let o = ($job_conf | do --ignore-errors $row.job ...$rest | default "")
-      $"(ansi gb)($row.id)(ansi reset)#[($o)]" | job send 0
-    }
-  }
+#     job spawn --tag $row.id {
+#       let o = ($job_conf | do --ignore-errors $row.job ...$rest | default "")
+#       $"(ansi gb)($row.id)(ansi reset)#[($o)]" | job send 0
+#     }
+#   }
 
-  for i in 1..($update_job | length) {
-    print (job recv)
-  }
-  print "\a"
+#   for i in 1..($update_job | length) {
+#     print (job recv)
+#   }
+#   print "\a"
 
-  null
-}
+#   null
+# }
 
-export def app-update-old [] {
+export def app-update [] {
   use jobd.nu
 
   jobd spawn app-update-rustup {
