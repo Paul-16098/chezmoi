@@ -525,6 +525,16 @@ export def "clip copy-image" [
         help: "please provide a valid image file path"
       }
     }
+    if (ls $path --mime-type | get 0.type) == "image/gif" {
+      error make {
+        msg: $"GIF images are not supported: (ansi green)($path)(ansi reset)"
+        label: {
+          text: "here"
+          span: (metadata $path).span
+        }
+        help: "please provide a non-GIF image file path"
+      }
+    }
 
     print --stderr $"Copying image to clipboard: (ansi green)($path)(ansi reset)"
 
