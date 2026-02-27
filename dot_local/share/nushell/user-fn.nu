@@ -612,3 +612,12 @@ export def --wrapped "docker compose version" [...rest: string]: nothing -> reco
 export def --wrapped "docker compose volumes" [...rest: string]: nothing -> table {
   ^docker compose volumes --format json ...$rest | from json
 }
+
+# use $color_code to highlight text in output
+export def highlight [
+  --color-code (-c) = "red_bold" # use in ansi $color_code to highlight text, hex string or color name supported
+  ...highlight_text: string # text to highlight in output, can not include regex special characters
+]: string -> string {
+  let highlight_regex = $highlight_text | str replace "|" "\|" | str join '|'
+  $in | str replace --all --regex $"\(($highlight_regex)\)" $"(ansi $color_code)$1(ansi reset)"
+}
