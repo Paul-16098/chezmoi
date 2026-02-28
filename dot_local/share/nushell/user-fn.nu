@@ -158,7 +158,12 @@ export def app-update [] {
     }
   }
 
-  [[name type]; [nu_plugin_dns cargo] [https://github.com/fdncred/nu_plugin_file git]] | each {|plugin|
+  [
+    [name type];
+    [nu_plugin_dns cargo]
+    [https://github.com/fdncred/nu_plugin_file git]
+    [https://github.com/fdncred/nu_plugin_to_gui git]
+  ] | each {|plugin|
     match $plugin.type {
       cargo => {
         jobd spawn $"app-update-nu-plugins-($plugin.name)" {
