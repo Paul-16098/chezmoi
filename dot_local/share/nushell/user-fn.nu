@@ -162,14 +162,14 @@ export def app-update [] {
     match $plugin.type {
       cargo => {
         jobd spawn $"app-update-nu-plugins-($plugin.name)" {
-          cargo install --locked $plugin.name
+          cargo install $plugin.name
         }
       }
       git => {
         jobd spawn $"app-update-nu-plugins-($plugin.name)" {
           let name = $plugin.name | split row "/" | last
 
-          cargo install --locked --git $plugin.name
+          cargo install --git $plugin.name
         }
       }
     }
