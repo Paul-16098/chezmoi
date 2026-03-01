@@ -29,18 +29,9 @@ $env.VIRTUAL_ENV_DISABLE_PROMPT = true
 $env.TRANSIENT_PROMPT_COMMAND = { starship module time }
 $env.TRANSIENT_PROMPT_INDICATOR = { (starship module directory) + $"(ansi wd)$(ansi reset) " }
 
-# completions
-## carapace
-# source ($nu.cache-dir | path join carapace.nu)
-## all-completions
-# overlay use ($nu.data-dir | path join all-completions.nu)
-# overlay use ($nu.data-dir | path join user-completions.nu)
+use ~\OneDrive\文件\git\nu_scripts\nu-hooks\nu-hooks\direnv\direnv.nu
 
 source "~/.local/share/atuin/init.nu"
-
-# $env.NU_ALIAS_FINDER_PREFIX = $"(ansi gb)Alias Tip(ansi reset):"
-# $env.NU_ALIAS_FINDER_IGNORED = "plugin"
-# overlay use ($nu.data-dir | path join "alias-finder/alias-finder.nu")
 
 # user functions
 overlay use ($nu.data-dir | path join user-fn.nu)
