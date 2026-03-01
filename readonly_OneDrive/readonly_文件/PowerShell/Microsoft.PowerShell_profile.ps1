@@ -1,4 +1,9 @@
+function Invoke-Starship-TransientFunction {
+    (&starship module time) + (&starship module directory) + "$ "
+}
 Invoke-Expression (&starship init powershell)
+Enable-TransientPrompt
+
 
 
 #f45873b3-b655-43a6-b217-97c00aa0db58 PowerToys CommandNotFound module
@@ -18,4 +23,12 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+/" -BriefDescription "Runs Atuin search" -
     if ($atuinModule) {
         & $atuinModule { Invoke-AtuinSearch }
     }
+}
+
+###
+
+Set-PSReadLineKeyHandler -Chord "Ctrl+d" -BriefDescription "Exits the shell" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' exit')
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
