@@ -149,7 +149,7 @@ export def app-update [] {
   job spawn --tag app-update-nu {
     if (gh api repos/nushell/nushell/commits | from json | first | get sha) != (version | get commit_hash) {
       print "A new version of NuShell is available, run for update:\a"
-      print ("cargo install --locked --git https://github.com/nushell/nushell.git nu -F full" | nu-highlight)
+      print ("start ./.config/nushell/scripts/nu-selfupdate.ps1" | nu-highlight)
     }
   }
   [nu_plugin_formats nu_plugin_polars nu_plugin_query] | each {|plugin|
