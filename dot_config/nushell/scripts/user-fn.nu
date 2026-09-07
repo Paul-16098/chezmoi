@@ -69,10 +69,10 @@ export def --wrapped whois [
         }
       }
 
-    mut status_code_urls = []
+    mut status_code_urls: table<"status codes": string, url: string> = []
     for $item in ($grouped | get --optional --ignore-case "Domain Status") {
       let parts = $item | split row " "
-      $status_code_urls ++= [[["status codes" url]; [($parts | get 0) ($parts | get 1)]]]
+      $status_code_urls ++= [["status codes" url]; [($parts | get 0) ($parts | get 1)]]
     }
 
     $grouped | merge {"Domain Status": $status_code_urls}
