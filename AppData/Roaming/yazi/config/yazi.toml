@@ -83,9 +83,10 @@ desc = "Run with Python"
 orphan = true
 
 [[opener.bat]]
-run = 'cmd /c "%s"'
+run = 'start cmd /c "%s"'
 desc = "Run with cmd"
 for = "windows"
+orphan = true
 
 [[opener.lazydocker]]
 run = "lazydocker -f %s"
