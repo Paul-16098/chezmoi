@@ -244,7 +244,7 @@ desc = "使用 rga 過濾文件"
 
 [[mgr.keymap]]
 on = ["F", "f"]
-run = "search --via=fd"
+run = "plugin fd"
 desc = "使用 fd 過濾文件"
 
 [[mgr.keymap]]
