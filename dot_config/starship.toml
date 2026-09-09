@@ -1,6 +1,6 @@
 "$schema" = "https://starship.rs/config-schema.json"
 format = "$time$all"
-right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery$memory_usage"
+right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery"
 add_newline = false
 
 [aws]
@@ -146,7 +146,6 @@ symbol = " "
 
 [memory_usage]
 symbol = "󰍛 "
-disabled = false
 
 [meson]
 symbol = "󰔷 "

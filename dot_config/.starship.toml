@@ -1,7 +1,7 @@
 #:schema https://starship.rs/config-schema.json
 
 format = "$time$all"
-right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery$memory_usage"
+right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery"
 
 add_newline = false
 
@@ -43,6 +43,3 @@ disabled = false
 [direnv]
 disabled = false
 detect_files = [".envrc", ".env"]
-
-[memory_usage]
-disabled = false
