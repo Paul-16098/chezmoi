@@ -163,7 +163,12 @@ export def app-update [
   }
 
   _jobd spawn app-update-yazi {
+    let old = ya pkg list | lines | parse "\t{name} ({hash})"
     ya pkg upgrade --discard
+    let new = ya pkg list | lines | parse "\t{name} ({hash})"
+    let diff = ($old | difference $new | upsert new_hash {|row| $new | where name == $row.name | first | get hash })
+    print $"update ($diff | length) pkg:"
+    print $diff
     rm ~/AppData/Roaming/yazi/config/plugins/piper.yazi/main.lua --permanent
     chezmoi apply ~/AppData/Roaming/yazi/config/plugins/piper.yazi/main.lua --force
   }
