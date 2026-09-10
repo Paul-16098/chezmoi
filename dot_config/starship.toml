@@ -1,5 +1,5 @@
 "$schema" = "https://starship.rs/config-schema.json"
-format = "$time$all"
+format = "$all"
 right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery"
 add_newline = false
 
@@ -329,10 +329,6 @@ transient_prompt_right = ""
 
 [git_metrics]
 disabled = false
-
-[time]
-disabled = false
-time_format = "%R"
 
 [env_var.yazi_level]
 description = "Indicate the shell was launched by `yazi`"

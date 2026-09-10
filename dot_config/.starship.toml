@@ -1,6 +1,6 @@
 #:schema https://starship.rs/config-schema.json
 
-format = "$time$all"
+format = "$all"
 right_format = "${env_var.yazi_level}$shlvl$cmd_duration$battery"
 
 add_newline = false
@@ -25,10 +25,6 @@ disabled = false
 truncation_length = 5
 truncation_symbol = ".../"
 read_only = " 󰌾"
-
-[time]
-disabled = false
-time_format = "%R"
 
 [env_var.yazi_level]
 description = "Indicate the shell was launched by `yazi`"
