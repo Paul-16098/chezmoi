@@ -79,11 +79,6 @@ export def --wrapped whois [
   }
 }
 
-# es wrapper to always output json parsed table
-export def --wrapped es [...rest: string]: nothing -> table {
-  ^es -instance 1.5a ...$rest --json | from json
-}
-
 # for each app update job, check if the update is enabled in the config before spawning the job, the config should be a record with app names as keys and a record with status on/off as values, e.g. {app-update-nu: {status: on}, app-update-rustup: {status: off}}
 export def app-update [
   cofg = {} # the config record to check if the update job is enabled, should be a record with app names as keys and a record with status on/off as values, e.g. {app-update-nu: {status: on}, app-update-rustup: {status: off}}
@@ -133,6 +128,25 @@ export def app-update [
         print $"app-update-nu-plugins: (ansi green)done: ($x)(ansi reset)"
       }
     }
+  }
+
+  _job spawn --description app-update-nu-parse {
+    mut s = ''
+    $s += add-wrapped-parse json 'gh api'
+
+    $s += add-wrapped-parse json 'docker compose ps' --ex-piper {
+      update RunningFor {
+        date from-human
+      }
+    } -- --no-trunc --format json
+    $s += add-wrapped-parse json 'docker compose ls' -- --format json
+    $s += add-wrapped-parse json 'docker compose stats' -- --no-trunc --no-stream --format json
+    $s += add-wrapped-parse json 'docker compose volumes' -- --format json
+    $s += add-wrapped-parse json 'docker compose version' -- --format json
+
+    $s += add-wrapped-parse json es -- --json
+
+    $s | save --force ($nu.user-autoload-dirs.0 | path join nu-parse.nu)
   }
 
   _job spawn --description app-update-atuin {
@@ -201,8 +215,6 @@ def git-log-subject-highlight [remote_url: string]: string -> string {
 # use in git log wrapper
 const NOREPLY_EMAIL = ["@users.noreply.github.com" "@noreply.codeberg.org" "noreply@github.com"]
 
-def "complete git log" [spans: list<string>]: nothing -> table<value: string, display: string, description: string, style: record<fg: string, attr: string>> { do $env.config.completions.external.completer [git log ...($spans | reject 0)] } # nu-lint-ignore: unused_helper_functions, list_param_to_variadic
-
 # use in git log wrapper to format author_email and committer_email, if it's a noreply email, show as "noreply email" in dark gray italic, otherwise add mailto link to the email
 def "format-git-email" [email: string]: nothing -> string {
   if ($NOREPLY_EMAIL | all {|suffix| not ($email | str ends-with $suffix) }) {
@@ -219,7 +231,7 @@ def "format-git-email" [email: string]: nothing -> string {
 # commit messages are highlighted for common prefixes
 # version tags are highlighted
 # no sort
-@complete "complete git log"
+@complete external
 @category git
 export def --wrapped "git log" [
   # --query-git-plugin # if set, query the git plugin for commit body
@@ -301,11 +313,9 @@ export-env {
     }
 }
 
-def "complete git pull" [spans: list<string>]: nothing -> table<value: string, display: string, description: string, style: record<fg: string, attr: string>> { do $env.config.completions.external.completer [git pull ...($spans | reject 0)] } # nu-lint-ignore: unused_helper_functions, list_param_to_variadic
-
 # git pull wrapper to show updated commits
 # and add hooks for pre-pull and post-pull scripts if they exist in .git/hooks/pre-pull and .git/hooks/post-pull, also add options to skip hooks and skip pause, and add config to disable the wrapper for specific repos or specific commit subjects, if the pull includes commits with subjects that match the configured ones, skip the interactive prompt and directly pull, also handle the case when there is no tracking information for the current branch and show a helpful error message
-@complete "complete git pull"
+@complete external
 @category git
 export def --wrapped "git pull" [
   --no-pause # if set, skip the interactive prompt and directly pull, useful for automation or when the user is confident about the changes being pulled
@@ -512,7 +522,7 @@ export def --wrapped "git show" [...rest: string]: any -> string {
   }
 }
 
-def "complete git status-or-diff" [spans: list<string>]: nothing -> table<value: string, display: string, description: string, style: record<fg: string, attr: string>> { do $env.config.completions.external.completer [git diff ...($spans | reject 0)] } # nu-lint-ignore: unused_helper_functions, list_param_to_variadic
+def "complete git status-or-diff" [buffer: string]: nothing -> table<value: string, display: string, description: string, style: record<fg: string, attr: string>> { do $env.config.completions.external.completer [git diff ($buffer | split row ' ' | reject 0)] } # nu-lint-ignore: unused_helper_functions, list_param_to_variadic
 
 # a wrapper for git status and git show, if no arguments, run git status, otherwise run git show with the provided arguments, also handle the case when git show is interrupted by user (exit code 141) to avoid showing error message
 @complete "complete git status-or-diff"
@@ -869,34 +879,6 @@ export def "meme" [
   clip copy-image ...$meme_path
 }
 
-# wrapper for docker compose commands to output json parsed tables
-@complete external
-export def --wrapped "docker compose ls" [...rest: string]: nothing -> table {
-  ^docker compose ls --format json ...$rest | from json
-}
-# wrapper for docker compose ps to output json parsed table and format RunningFor column to human readable date
-@complete external
-export def --wrapped "docker compose ps" [...rest: string]: nothing -> table {
-  ^docker compose ps --no-trunc --format json ...$rest | from json | update RunningFor {
-    date from-human
-  }
-}
-# wrapper for docker compose stats to output json parsed table, also add --no-trunc and --no-stream to get full output and only one snapshot
-@complete external
-export def --wrapped "docker compose stats" [...rest: string]: nothing -> table {
-  ^docker compose stats --no-trunc --no-stream --format json ...$rest | from json
-}
-# wrapper for docker compose version to output json parsed record
-@complete external
-export def --wrapped "docker compose version" [...rest: string]: nothing -> record {
-  ^docker compose version --format json ...$rest | from json
-}
-# wrapper for docker volumes to output json parsed table
-@complete external
-export def --wrapped "docker compose volumes" [...rest: string]: nothing -> table {
-  ^docker compose volumes --format json ...$rest | from json
-}
-
 # use $color_code to highlight text in output
 @example "highlight with text" { "abc" | highlight "a" } --result "\u{1b}[1;31ma\u{1b}[0mbc"
 @example "highlight with 2 text" { "abc" | highlight "a" "c" } --result "\u{1b}[1;31ma\u{1b}[0mb\u{1b}[1;31mc\u{1b}[0m"
@@ -1013,16 +995,6 @@ export def aic --wrapped [...rest: string]: nothing -> nothing {
       ps name 'ollama' | kill ...$in.pid --force
     }
   }
-}
-
-# a wrapper for gh api command to output json parsed, if the output is invalid json, return string
-@complete external
-export def 'gh api' --wrapped [...rest: string]: [
-  nothing -> oneof<table, record> # valid json
-  nothing -> string # invalid json
-] {
-  let out: string = ^gh api ...$rest
-  try { $out | from json } catch { $out }
 }
 
 def "nu-complete-ext nu" []: nothing -> record {
@@ -1159,7 +1131,43 @@ export def 'vivid preview-all' []: nothing -> table<name: string, preview: strin
   }
 }
 
-# aws wrapper to output yaml parsed table, if the output is invalid yaml, return string
-export def aws --wrapped [...rest]: nothing -> any {
-  aws ...$rest | from yaml
+def add_wrapped_parse_lang [] {
+  {
+    json: { from json --strict }
+    jsonl: { from json --strict --objects }
+    toml: { from toml }
+    yaml: { from yaml }
+  }
+}
+def "nu-complete add-wrapped-parse lang" []: nothing -> record<json: closure, jsonl: closure, toml: closure, yaml: closure> {
+  add_wrapped_parse_lang | items {|a| $a }
+}
+export def 'add-wrapped-parse' [
+  parse: string@"nu-complete add-wrapped-parse lang"
+  command_name: string
+  ...command_args: string
+  --ex-piper: closure
+]: nothing -> string {
+  let parse_fn = add_wrapped_parse_lang | get --optional $parse
+  let command_args_str = $command_args | str join ' '
+  if ($parse_fn | is-empty) {
+    error make {
+      msg: $"parse ($parse) is not exists"
+      labels: [
+        {text: 'here' span: (metadata $parse).span}
+      ]
+      help: 'Follow the auto complete.'
+    }
+  }
+
+  let ex_str = if ($ex_piper | is-not-empty) {
+    let ex_fn = view source $ex_piper
+    $" | do ($ex_fn)"
+  } else { '' }
+
+  $"# This function is generated by add-wrapped-parse
+@complete external 
+export def --wrapped '($command_name)' [...rest: string]: any -> any {
+    ^($command_name) ($command_args_str) ...$rest | do (view source $parse_fn)($ex_str)
+}\n"
 }
