@@ -6,6 +6,26 @@ run = "refresh"
 desc = "刷新"
 
 [[mgr.keymap]]
+on = ["h", "a"]
+run = "plugin toggle-pane min-parent"
+desc = "toggle hide parent pane"
+
+[[mgr.keymap]]
+on = ["h", "s"]
+run = "plugin toggle-pane min-current"
+desc = "toggle hide current pane"
+
+[[mgr.keymap]]
+on = ["h", "s"]
+run = "plugin toggle-pane min-preview"
+desc = "toggle hide preview pane"
+
+[[mgr.keymap]]
+on = ["h", "r"]
+run = "plugin toggle-pane reset"
+desc = "reset pane size"
+
+[[mgr.keymap]]
 on = ["m", "s"]
 run = "linemode size"
 desc = "Linemode: 大小"
