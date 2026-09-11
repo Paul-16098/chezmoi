@@ -107,7 +107,7 @@
 
 ## Show numeric shortcuts (1..9) beside list items in the TUI
 ## set to false to hide the moving numbers if you find them distracting
-# show_numeric_shortcuts = true
+show_numeric_shortcuts = false
 
 ## default history list format - can also be specified with the --format arg
 # history_format = "{time}\t{command}\t{duration}"
@@ -249,22 +249,6 @@ command_chaining = true
 #   "vi"
 # ]
 
-[keys]
-# Defaults to true. If disabled, using the up/down key won't exit the TUI when scrolled past the first/last entry.
-# scroll_exits = true
-
-# Defaults to true. The left arrow key will exit the TUI when scrolling before the first character
-# exit_past_line_start = true
-
-# Defaults to true. The right arrow key performs the same functionality as Tab and copies the selected line to the command line to be modified.
-# accept_past_line_end = true
-
-# Defaults to false. The left arrow key performs the same functionality as Tab and copies the selected line to the command line to be modified.
-# accept_past_line_start = false
-
-# Defaults to false. The backspace key performs the same functionality as Tab and copies the selected line to the command line to be modified when at the start of the line.
-# accept_with_backspace = false
-
 [preview]
 ## which preview strategy to use to calculate the preview height (respects max_preview_height).
 ## possible values: auto, static
@@ -404,6 +388,41 @@ command_chaining = true
 ## Make directory expand instead of command:
 # columns = ["duration", "time", { type = "directory", expand = true }, { type = "command", expand = false }]
 
+columns = ["duration", "exit", "command"]
+
 ## Syntax highlight commands in the search results, using the theme's colors.
 ## Not available on all platforms (e.g. Windows).
 # syntax_highlight = true
+
+[keymap.emacs]
+"ctrl-o" = "noop"
+"tab" = "toggle-tab"
+
+"9" = "noop"
+"8" = "noop"
+"7" = "noop"
+"6" = "noop"
+"5" = "noop"
+"4" = "noop"
+"3" = "noop"
+"2" = "noop"
+"1" = "noop"
+
+"right" = "cursor-right"
+"left" = "cursor-left"
+"ctrl-d" = "noop"
+"ctrl-a" = "noop"
+"ctrl-g" = "noop"
+"ctrl-u" = "noop"
+"ctrl-w" = "noop"
+"ctrl-y" = "noop"
+
+"ctrl-c" = "copy"
+
+[keymap.inspector]
+"tab" = "toggle-tab"
+"ctrl-D" = "delete-all"
+
+"1" = "inspect-runs"
+"2" = "inspect-session"
+"3" = "inspect-stats"
