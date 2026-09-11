@@ -36,13 +36,21 @@ $env.config.hinter.closure = {|ctx|
   } else {
     let candidate = (
       try {
-        ^atuin search --limit 1 --cmd-only ($"^($ctx.line)")
+        ^atuin search --cwd $ctx.cmd --limit 1 --cmd-only ($"^($ctx.line)")
         | lines
         | first
       } catch {
         null
       }
-    )
+    ) | default --empty (
+        try {
+          ^atuin search --limit 1 --cmd-only ($"^($ctx.line)")
+          | lines
+          | first
+        } catch {
+          null
+        }
+      )
 
     if $candidate == null or not ($candidate | str starts-with $ctx.line) {
       null
