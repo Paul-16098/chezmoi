@@ -996,8 +996,6 @@ export def aic --wrapped [...rest: string]: nothing -> nothing {
   if ($id | is-not-empty) {
     try {
       job kill $id
-    } catch {
-      ps name 'ollama' | kill ...$in.pid --force
     }
   }
 }
