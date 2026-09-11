@@ -240,7 +240,7 @@ command_chaining = true
 # ]
 
 ## Set commands that should be totally stripped and ignored from stats
-# common_prefix = ["sudo"]
+common_prefix = ["sudo", "gsudo"]
 
 ## Set commands that will be completely ignored from stats
 # ignored_commands = [
