@@ -14,11 +14,6 @@
 ## windows: %USERPROFILE%/.local/share/atuin/key
 # key_path = "~/.key"
 
-## where to store your auth session token, default is your system data directory
-## linux/mac: ~/.local/share/atuin/session
-## windows: %USERPROFILE%/.local/share/atuin/session
-# session_path = "~/.session"
-
 ## date format used, either "us" or "uk"
 # dialect = "us"
 
@@ -34,6 +29,10 @@
 ## enable or disable automatic update checks
 # update_check = true
 
+## which release channel to follow with `atuin update` and update checks
+## "stable" for stable releases only, "nightly" to also receive prereleases
+# update_channel = "stable"
+
 ## address of the sync server
 # sync_address = "https://api.atuin.sh"
 
@@ -43,7 +42,7 @@
 # sync_frequency = "5m"
 
 ## which search mode to use for interactive search
-## possible values: prefix, fulltext, fuzzy, skim
+## possible values: prefix, fulltext, fuzzy, daemon-fuzzy
 # search_mode = "fuzzy"
 
 ## which search mode to use when atuin is invoked from a shell up-key binding
@@ -173,7 +172,7 @@ history_filter = [
 ## 5. Stripe live/test keys
 # secrets_filter = true
 
-## Defaults to true. If enabled, upon hitting enter Atuin will immediately execute the command,
+## If enabled, upon hitting enter Atuin will immediately execute the command,
 ## whereas tab will put the command in the prompt for editing.
 ## If set to false, both enter and tab will place the command in the prompt for editing.
 ## This applies for new installs. Old installs will keep the old behaviour unless configured otherwise.
@@ -205,7 +204,7 @@ command_chaining = true
 # extra_headers = { "CF-Access-Client-Id" = "...", "CF-Access-Client-Secret" = "..." }
 
 ## Timeout (in seconds) for acquiring a local database connection (sqlite)
-# local_timeout = 5
+# local_timeout = 2
 
 ## Set this to true and Atuin will minimize motion in the UI - timers will not update live, etc.
 ## Alternatively, set env NO_MOTION=true
@@ -286,21 +285,34 @@ command_chaining = true
 # sync_frequency = 300
 
 ## The path to the unix socket used by the daemon (on unix systems)
-## linux/mac: ~/.local/share/atuin/atuin.sock
+## linux/mac default:
+## - if systemd_socket is false: $TMPDIR/atuin-$UID/atuin.sock
+## - if systemd_socket is true: $XDG_RUNTIME_DIR/atuin.sock
 ## windows: Not Supported
-# socket_path = "~/.local/share/atuin/atuin.sock"
+# socket_path = "/custom/path/to/atuin.sock"
 
 ## The daemon pidfile used for lifecycle management.
 ## Defaults to the Atuin data directory.
 # pidfile_path = "~/.local/share/atuin/atuin-daemon.pid"
 
-## Use systemd socket activation rather than opening the given path (the path must still be correct for the client)
+## Use systemd socket activation rather than opening the given path (the path must still be correct).
+## Note: setting this to true changes the default value of socket_path; see above.
 ## linux: false
 ## mac/windows: Not Supported
 # systemd_socket = false
 
 ## The port that should be used for TCP on non unix systems
 # tcp_port = 8889
+
+# [pty_proxy]
+## If enabled, `atuin init` will first re-exec your shell inside `atuin pty-proxy`,
+## so you don't need a separate `eval "$(atuin pty-proxy init)"` line in your shell
+## config. Supported for bash, zsh, fish and nu on unix platforms.
+## For the fastest startup, keep your `atuin init` line near the top of your shell
+## config: everything sourced before it runs again inside the proxy.
+## Safe to combine with an existing `atuin pty-proxy init` line — the proxy only
+## starts once.
+# enabled = false
 
 # [theme]
 ## Color theme to use for rendering in the terminal.
